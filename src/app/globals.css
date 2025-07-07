@@ -1,1 +1,42 @@
 @import "tailwindcss";
+
+@layer base {
+  * {
+    @apply scroll-smooth;
+  }
+
+  /* Remove scrollbar */
+  .remove-scrollbar::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+    border-radius: 0px;
+  }
+
+  .remove-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .remove-scrollbar::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 0px;
+  }
+
+  .remove-scrollbar::-webkit-scrollbar-thumb:hover {
+    /* background: #1e2238; */
+    background: transparent;
+  }
+
+  .recharts-responsive-container {
+    height: initial !important;
+  }
+}
+
+@theme {
+  --color-schoolSky: #c3ebfa;
+  --color-schoolSkyLight: #edf9fd;
+  --color-schoolPurple: #cfceff;
+  --color-schoolPurpleLight: #f1f0ff;
+  --color-schoolYellow: #fae27c;
+  --color-schoolYellowLight: #fefce8;
+  --color-background: #f7f8fa;
+}

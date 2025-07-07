@@ -5,7 +5,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="h-screen flex">
       <Sidebar />
-      <div className="w-[86%] md:w-[92%] lg:w-[80%] xl:w-[86%] overflow-auto bg-gray-100">
+      <div className="w-[86%] md:w-[92%] lg:w-[80%] xl:w-[86%] overflow-auto bg-background">
         <Navbar />
         <div>{children}</div>
       </div>

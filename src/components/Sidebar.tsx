@@ -4,20 +4,20 @@ import Link from "next/link";
 
 const Sidebar = () => {
   return (
-    <div className="w-[14%] md:w-[8%] lg:w-[20%] xl:[14%] p-4 overflow-auto">
+    <div className="w-[14%] md:w-[8%] lg:w-[18%] xl:[14%] p-4 overflow-auto">
       {/* Logo and brand  */}
       <Link
         href="/"
-        className="flex items-center justify-center lg:justify-start gap-2"
+        className="flex items-center justify-center lg:justify-start gap-1 xl:gap-2"
       >
         <Image
           src="/school-logo.png"
           alt="SchoolSphere Logo"
-          width={50}
-          height={50}
+          width={40}
+          height={40}
           className="h-auto"
         />
-        <span className="xl:text-2xl font-extrabold hidden lg:block leading-2 text-orange-400">
+        <span className="xl:text-2xl lg:text-md text-md font-extrabold hidden lg:block leading-2 text-orange-400">
           School<span className="text-teal-400">Sphere</span>
         </span>
       </Link>
@@ -32,7 +32,7 @@ const Sidebar = () => {
               <Link
                 key={data.label}
                 href={data.href}
-                className="flex items-center justify-center gap-4 text-gray-500 p-1 lg:justify-start hover:bg-gray-200 rounded-2xl px-2 py-2"
+                className="flex items-center justify-center gap-4 text-gray-500 p-1 lg:justify-start hover:bg-gray-200 rounded-2xl py-2"
               >
                 <Image
                   src={data.icon}
@@ -41,7 +41,7 @@ const Sidebar = () => {
                   height={20}
                   className="h-auto"
                 />
-                <span className="hidden lg:block ">{data.label}</span>
+                <span className="hidden lg:block pr-2 ">{data.label}</span>
               </Link>
             ))}
           </div>
