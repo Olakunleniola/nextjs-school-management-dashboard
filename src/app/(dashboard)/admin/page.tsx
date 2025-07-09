@@ -1,15 +1,33 @@
+import AttendanceChart from "@/components/AttendanceChart";
+import CountChart from "@/components/CountChart";
+import FinanceChart from "@/components/FinanceChart";
 import UserCard from "@/components/UserCard";
-import React from "react";
 
 const Admin = () => {
   return (
     <div className="flex flex-wrap flex-col md:flex-row p-4 ">
       <div className="w-full lg:w-2/3 flex-1">
+        {/* USER CARD */}
         <div className="flex w-full gap-4 flex-wrap">
           <UserCard type="admin" />
           <UserCard type="teacher" />
           <UserCard type="student" />
           <UserCard type="parent" />
+        </div>
+        {/* MIDDLE CHART */}
+        <div className="flex gap-5 justify-between flex-col lg:flex-row mt-4">
+          {/* COUNT CHART */}
+          <div className="w-full lg:w-1/3 h-[450px] ">
+            <CountChart />
+          </div>
+          {/* ATTENDANCE CHART */}
+          <div className="w-full lg:w-2/3 h-[450px]">
+            <AttendanceChart />
+          </div>
+        </div>
+        {/* BOTTOM CHART */}
+        <div className="w-full h-[500px] mt-4">
+          <FinanceChart />
         </div>
       </div>
       <div className="w-full lg:w-1/3">Right</div>
