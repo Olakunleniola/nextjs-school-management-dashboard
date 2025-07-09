@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { menuItems } from "../../lib/Data";
+import { menuItems, role } from "../../lib/Data";
 import Link from "next/link";
 
 const Sidebar = () => {
@@ -28,22 +28,26 @@ const Sidebar = () => {
             <span className="uppercase hidden lg:block text-gray-400 font-light my-4">
               {item.title}
             </span>
-            {item.items.map((data) => (
-              <Link
-                key={data.label}
-                href={data.href}
-                className="flex items-center justify-center gap-4 text-gray-500 p-1 lg:justify-start hover:bg-gray-200 rounded-2xl py-2"
-              >
-                <Image
-                  src={data.icon}
-                  alt="menu-logo"
-                  width={20}
-                  height={20}
-                  className="h-auto"
-                />
-                <span className="hidden lg:block pr-2 ">{data.label}</span>
-              </Link>
-            ))}
+            {item.items.map((data) => {
+              if (data.visible.includes(role)) {
+                return (
+                  <Link
+                    key={data.label}
+                    href={data.href}
+                    className="flex items-center justify-center gap-4 text-gray-500 md:px-2 lg:justify-start hover:bg-schoolSky rounded-md py-2"
+                  >
+                    <Image
+                      src={data.icon}
+                      alt="menu-logo"
+                      width={20}
+                      height={20}
+                      className="h-auto"
+                    />
+                    <span className="hidden lg:block pr-2 ">{data.label}</span>
+                  </Link>
+                );
+              }
+            })}
           </div>
         ))}
       </div>
