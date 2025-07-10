@@ -7,7 +7,7 @@ const Parent = () => {
       {/* LEFT */}
       <div className="w-full xl:w-2/3 ">
         <div className="bg-white p-5 h-full rounded-2xl">
-          <h1 className="text-lg font-semibold">Schedule (John Doe) </h1>
+          <h1 className="text-lg font-semibold">Schedule (John Doe)</h1>
           <BigCalendar />
         </div>
       </div>
