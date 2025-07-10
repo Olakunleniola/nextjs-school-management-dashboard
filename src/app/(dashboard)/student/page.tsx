@@ -1,11 +1,25 @@
-import React from 'react'
+import Announcement from "@/components/Announcement";
+import BigCalendar from "@/components/BigCalendar";
+import EventCalendar from "@/components/EventCalendar";
+import React from "react";
 
 const Student = () => {
   return (
-    <div>
-      Student Dashboard
+    <div className="flex flex-col xl:flex-row gap-5 p-4">
+      {/* LEFT */}
+      <div className="w-full xl:w-2/3 ">
+        <div className="bg-white p-5 h-full rounded-2xl">
+          <h1 className="text-lg font-semibold">Schedule (4A)</h1>
+          <BigCalendar />
+        </div>
+      </div>
+      {/* RIGHT */}
+      <div className="w-full xl:w-1/3 flex flex-col gap-5">
+        <EventCalendar />
+        <Announcement />
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Student
+export default Student;
