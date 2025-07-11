@@ -3,32 +3,46 @@ import Search from "@/components/Search";
 import Table from "@/components/Table";
 import Image from "next/image";
 import Link from "next/link";
-import { role, subjectsData } from "../../../../../lib/Data";
+import { role, classesData } from "../../../../../lib/Data";
 
-interface SubjectProp {
+interface ClassesProp {
   id: number;
-  teachers: string[];
+  supervisor: string;
   name: string;
+  grade: number;
+  capacity: number;
 }
 
 const columns = [
-  { header: "Subject Name", accessor: "subjects" },
+  { header: "Class Name", accessor: "classes" },
   {
-    header: "Teachers",
-    accessor: "teachers",
+    header: "Capaity",
+    accessor: "capacity",
+    className: "hidden md:table-cell",
+  },
+  {
+    header: "Grade",
+    accessor: "grade",
+    className: "hidden md:table-cell",
+  },
+  {
+    header: "Supervisor",
+    accessor: "supervisor",
     className: "hidden md:table-cell",
   },
   { header: "Action", accessor: "action" },
 ];
 
 const SubjectListPage = () => {
-  const renderCell = (items: SubjectProp) => (
+  const renderCell = (items: ClassesProp) => (
     <tr
       key={items.id}
       className="border-b border-gray-200 even:bg-slate-50 text-xs hover:bg-schoolPurpleLight xl:text-sm"
     >
       <td className="flex items-center p-4 gap-4">{items.name}</td>
-      <td className="hidden md:table-cell">{items.teachers.join(", ")}</td>
+      <td className="hidden md:table-cell">{items.capacity}</td>
+      <td className="hidden md:table-cell">{items.grade}</td>
+      <td className="hidden md:table-cell">{items.supervisor}</td>
       <td>
         <div className="flex items-center gap-2">
           <Link href={`/list/teachers/${items.id}`}>
@@ -49,9 +63,7 @@ const SubjectListPage = () => {
     <div className="flex-1 mx-4 p-4 bg-white rounded-lg space-y-6 ">
       {/* TOP  */}
       <div className="center-btw gap-4 ">
-        <h1 className=" hidden md:block text-xl font-semibold ">
-          All Subjects
-        </h1>
+        <h1 className=" hidden md:block text-xl font-semibold ">All Classes</h1>
         <div className="flex items-center md:flex-row flex-col gap-4 w-full md:w-auto">
           <Search />
           <div className="flex items-center self-end md:self-center gap-4">
@@ -73,7 +85,7 @@ const SubjectListPage = () => {
         </div>
       </div>
       {/* CONTENT */}
-      <Table columns={columns} renderCell={renderCell} data={subjectsData} />
+      <Table columns={columns} renderCell={renderCell} data={classesData} />
       {/* PAGINATION */}
       <Pagination />
     </div>
