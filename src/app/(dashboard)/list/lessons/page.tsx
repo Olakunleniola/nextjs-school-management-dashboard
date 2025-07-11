@@ -3,51 +3,40 @@ import Search from "@/components/Search";
 import Table from "@/components/Table";
 import Image from "next/image";
 import Link from "next/link";
-import { role, classesData } from "../../../../../lib/Data";
+import { role, lessonsData } from "../../../../../lib/Data";
 
-interface ClassesProp {
+interface lesson {
   id: number;
-  supervisor: string;
-  name: string;
-  grade: number;
-  capacity: number;
+  subject: string;
+  teacher: string;
+  class: number;
 }
 
 const columns = [
-  { header: "Class Name", accessor: "classes" },
+  { header: "Subject Name", accessor: "subjects" },
+  { header: "Class", accessor: "class" },
   {
-    header: "Capaity",
-    accessor: "capacity",
-    className: "hidden md:table-cell",
-  },
-  {
-    header: "Grade",
-    accessor: "grade",
-    className: "hidden md:table-cell",
-  },
-  {
-    header: "Supervisor",
-    accessor: "supervisor",
+    header: "Teacher",
+    accessor: "teacher",
     className: "hidden md:table-cell",
   },
   { header: "Action", accessor: "action" },
 ];
 
-const ClassesListPage = () => {
-  const renderCell = (items: ClassesProp) => (
+const LessonListPage = () => {
+  const renderCell = (items: lesson) => (
     <tr
       key={items.id}
       className="border-b border-gray-200 even:bg-slate-50 text-xs hover:bg-schoolPurpleLight xl:text-sm"
     >
-      <td className="flex items-center p-4 gap-4">{items.name}</td>
-      <td className="hidden md:table-cell">{items.capacity}</td>
-      <td className="hidden md:table-cell">{items.grade}</td>
-      <td className="hidden md:table-cell">{items.supervisor}</td>
+      <td className="flex items-center p-4 gap-4">{items.subject}</td>
+      <td>{items.class}</td>
+      <td className="hidden md:table-cell">{items.teacher}</td>
       <td>
         <div className="flex items-center gap-2">
           <Link href={`/list/teachers/${items.id}`}>
             <button className="w-8 h-8 p-2 rounded-full bg-schoolSky cursor-pointer">
-              <Image src="/view.png" alt="" width={16} height={16} />
+              <Image src="/edit.png" alt="" width={16} height={16} />
             </button>
           </Link>
           {role === "admin" && (
@@ -63,7 +52,7 @@ const ClassesListPage = () => {
     <div className="flex-1 mx-4 p-4 bg-white rounded-lg space-y-6 ">
       {/* TOP  */}
       <div className="center-btw gap-4 ">
-        <h1 className=" hidden md:block text-xl font-semibold ">All Classes</h1>
+        <h1 className=" hidden md:block text-xl font-semibold ">All Lessons</h1>
         <div className="flex items-center md:flex-row flex-col gap-4 w-full md:w-auto">
           <Search />
           <div className="flex items-center self-end md:self-center gap-4">
@@ -85,11 +74,11 @@ const ClassesListPage = () => {
         </div>
       </div>
       {/* CONTENT */}
-      <Table columns={columns} renderCell={renderCell} data={classesData} />
+      <Table columns={columns} renderCell={renderCell} data={lessonsData} />
       {/* PAGINATION */}
       <Pagination />
     </div>
   );
 };
 
-export default ClassesListPage;
+export default LessonListPage;
