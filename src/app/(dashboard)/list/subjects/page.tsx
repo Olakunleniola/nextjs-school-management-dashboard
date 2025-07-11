@@ -3,52 +3,32 @@ import Search from "@/components/Search";
 import Table from "@/components/Table";
 import Image from "next/image";
 import Link from "next/link";
-import { parentsData, role } from "../../../../../lib/Data";
+import { role, subjectsData } from "../../../../../lib/Data";
 
 interface ParentProp {
   id: number;
-  students: string[];
+  teachers: string[];
   name: string;
-  email?: string;
-  phone: string;
-  address: string;
 }
 
 const columns = [
-  { header: "Info", accessor: "info" },
+  { header: "Subject Name", accessor: "subjects" },
   {
-    header: "Student Name",
-    accessor: "studentName",
+    header: "Teachers",
+    accessor: "teachers",
     className: "hidden md:table-cell",
-  },
-  {
-    header: "Phone",
-    accessor: "phone",
-    className: "hidden lg:table-cell",
-  },
-  {
-    header: "Address",
-    accessor: "address",
-    className: "hidden lg:table-cell",
   },
   { header: "Action", accessor: "action" },
 ];
 
-const ParentListPage = () => {
+const SubjectListPage = () => {
   const renderCell = (items: ParentProp) => (
     <tr
       key={items.id}
       className="border-b border-gray-200 even:bg-slate-50 text-xs hover:bg-schoolPurpleLight xl:text-sm"
     >
-      <td className="flex items-center p-4 gap-4">
-        <div className="flex flex-col">
-          <h3 className="font-semibold ">{items.name}</h3>
-          <p className="text-xs text-gray-500">{items?.email}</p>
-        </div>
-      </td>
-      <td className="hidden md:table-cell">{items.students.join(", ")}</td>
-      <td className="hidden lg:table-cell">{items.phone}</td>
-      <td className="hidden lg:table-cell">{items.address}</td>
+      <td className="flex items-center p-4 gap-4">{items.name}</td>
+      <td className="hidden md:table-cell">{items.teachers.join(", ")}</td>
       <td>
         <div className="flex items-center gap-2">
           <Link href={`/list/teachers/${items.id}`}>
@@ -70,7 +50,7 @@ const ParentListPage = () => {
       {/* TOP  */}
       <div className="center-btw gap-4 ">
         <h1 className=" hidden md:block text-xl font-semibold ">
-          All Parents
+          All Subjects
         </h1>
         <div className="flex items-center md:flex-row flex-col gap-4 w-full md:w-auto">
           <Search />
@@ -93,11 +73,11 @@ const ParentListPage = () => {
         </div>
       </div>
       {/* CONTENT */}
-      <Table columns={columns} renderCell={renderCell} data={parentsData} />
+      <Table columns={columns} renderCell={renderCell} data={subjectsData} />
       {/* PAGINATION */}
       <Pagination />
     </div>
   );
 };
 
-export default ParentListPage;
+export default SubjectListPage;
