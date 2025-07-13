@@ -18,7 +18,7 @@ const columns = [
     accessor: "teachers",
     className: "hidden md:table-cell",
   },
-  { header: "Action", accessor: "action" },
+  { header: "Actions", accessor: "action" },
 ];
 
 const SubjectListPage = () => {

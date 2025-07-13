@@ -18,7 +18,7 @@ const columns = [
   { header: "Class", accessor: "class" },
   { header: "Teacher", accessor: "teacher", className: "hidden md:table-cell" },
   { header: "Due Date", accessor: "date", className: "hidden md:table-cell" },
-  { header: "Action", accessor: "action" },
+  { header: "Actions", accessor: "action" },
 ];
 
 const ExamListPage = () => {

@@ -44,7 +44,7 @@ const columns = [
     accessor: "address",
     className: "hidden lg:table-cell",
   },
-  { header: "Action", accessor: "action" },
+  { header: "Actions", accessor: "action" },
 ];
 
 const TeachersListPage = () => {
