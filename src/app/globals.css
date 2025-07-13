@@ -42,7 +42,7 @@
   }
 
   .recharts-responsive-container {
-    height: initial !important;
+    /* height: initial !important; */
   }
   
   .react-calendar {

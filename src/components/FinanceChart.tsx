@@ -71,8 +71,7 @@ const FinanceChart = () => {
           className="cursor-pointer h-auto"
         />
       </div>
-      <div className="w-full h-full mt-5">
-        <ResponsiveContainer width="100%" height={400}>
+        <ResponsiveContainer width="100%" height="90%">
           <LineChart
             width={500}
             height={300}
@@ -119,7 +118,6 @@ const FinanceChart = () => {
             />
           </LineChart>
         </ResponsiveContainer>
-      </div>
     </div>
   );
 };

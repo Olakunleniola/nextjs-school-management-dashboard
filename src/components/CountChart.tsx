@@ -29,12 +29,7 @@ const CountChart = () => {
       {/* BODY */}
       <div className=" w-full h-[75%] relative flex items-center justify-center">
         {/* Added min-h-[250px] to help ensure the chart has height */}
-        <ResponsiveContainer
-          width="100%"
-          height="100%"
-          aspect={1}
-          className="max-w-[300px] md:max-w-[250px] lg:max-w-[300px] mx-auto"
-        >
+        <ResponsiveContainer>
           <RadialBarChart
             cx="50%"
             cy="50%"
