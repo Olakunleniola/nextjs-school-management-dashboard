@@ -2,8 +2,8 @@ import Pagination from "@/components/Pagination";
 import Search from "@/components/Search";
 import Table from "@/components/Table";
 import Image from "next/image";
-import Link from "next/link";
 import { role, resultsData } from "../../../../../lib/Data";
+import FormModal from "@/components/FormModal";
 
 interface ResultProp {
   id: number;
@@ -40,15 +40,11 @@ const ExamListPage = () => {
       <td className="hidden md:table-cell">{items.date}</td>
       <td>
         <div className="flex items-center gap-2">
-          <Link href={`/list/teachers/${items.id}`}>
-            <button className="w-8 h-8 p-2 rounded-full bg-schoolSky cursor-pointer">
-              <Image src="/edit.png" alt="" width={16} height={16} />
-            </button>
-          </Link>
           {role === "admin" && (
-            <button className="w-8 h-8 p-2 rounded-full bg-schoolPurple cursor-pointer">
-              <Image src="/delete.png" alt="" width={16} height={16} />
-            </button>
+            <>
+              <FormModal type="update" table="result" data={items} />
+              <FormModal type="delete" table="result" id={items.id} />
+            </>
           )}
         </div>
       </td>
@@ -73,9 +69,7 @@ const ExamListPage = () => {
             <button className="w-8 h-8 center rounded-full bg-schoolYellow p-2 cursor-pointer">
               <Image src="/sort.png" alt="sort-logo" width={20} height={20} />
             </button>
-            <button className="w-8 h-8 center rounded-full bg-schoolYellow p-2 cursor-pointer">
-              <Image src="/plus.png" alt="plus-logo" width={20} height={20} />
-            </button>
+            {role === "admin" && <FormModal type="create" table="result" />}
           </div>
         </div>
       </div>

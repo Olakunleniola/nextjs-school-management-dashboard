@@ -2,8 +2,8 @@ import Pagination from "@/components/Pagination";
 import Search from "@/components/Search";
 import Table from "@/components/Table";
 import Image from "next/image";
-import Link from "next/link";
 import { parentsData, role } from "../../../../../lib/Data";
+import FormModal from "@/components/FormModal";
 
 interface ParentProp {
   id: number;
@@ -51,15 +51,11 @@ const ParentListPage = () => {
       <td className="hidden lg:table-cell">{items.address}</td>
       <td>
         <div className="flex items-center gap-2">
-          <Link href={`/list/teachers/${items.id}`}>
-            <button className="w-8 h-8 p-2 rounded-full bg-schoolSky cursor-pointer">
-              <Image src="/view.png" alt="" width={16} height={16} />
-            </button>
-          </Link>
           {role === "admin" && (
-            <button className="w-8 h-8 p-2 rounded-full bg-schoolPurple cursor-pointer">
-              <Image src="/delete.png" alt="" width={16} height={16} />
-            </button>
+            <>
+              <FormModal type="update" table="parent" data={items} />
+              <FormModal type="delete" table="parent" id={items.id} />
+            </>
           )}
         </div>
       </td>
@@ -69,9 +65,7 @@ const ParentListPage = () => {
     <div className="flex-1 mx-4 p-4 bg-white rounded-lg space-y-6 ">
       {/* TOP  */}
       <div className="center-btw gap-4 ">
-        <h1 className=" hidden md:block text-xl font-semibold ">
-          All Parents
-        </h1>
+        <h1 className=" hidden md:block text-xl font-semibold ">All Parents</h1>
         <div className="flex items-center md:flex-row flex-col gap-4 w-full md:w-auto">
           <Search />
           <div className="flex items-center self-end md:self-center gap-4">
@@ -86,9 +80,7 @@ const ParentListPage = () => {
             <button className="w-8 h-8 center rounded-full bg-schoolYellow p-2 cursor-pointer">
               <Image src="/sort.png" alt="sort-logo" width={20} height={20} />
             </button>
-            <button className="w-8 h-8 center rounded-full bg-schoolYellow p-2 cursor-pointer">
-              <Image src="/plus.png" alt="plus-logo" width={20} height={20} />
-            </button>
+            {role === "admin" && <FormModal type="create" table="parent" />}
           </div>
         </div>
       </div>
