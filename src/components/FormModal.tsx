@@ -3,6 +3,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import TeacherForm from "./forms/TeacherForm";
 
 interface FormModalProps {
   table:
@@ -21,28 +22,61 @@ interface FormModalProps {
   type: "create" | "update" | "delete";
   data?: any;
   id?: number;
+  bgdColor?: string;
 }
 
-const FormModal: React.FC<FormModalProps> = ({ table, type, data, id }) => {
+const FormModal: React.FC<FormModalProps> = ({
+  table,
+  type,
+  data,
+  id,
+  bgdColor,
+}) => {
   const size = type === "create" ? "w-8 h-8" : "w-7 h-7";
-  const bgColor =
-    type === "create"
-      ? "bg-schoolYellow"
-      : type === "delete"
-      ? "bg-schoolPurple"
-      : "bg-schoolSky";
+  const bgColor = bgdColor
+    ? bgdColor
+    : type === "create"
+    ? "bg-schoolYellow"
+    : type === "delete"
+    ? "bg-schoolPurple"
+    : "bg-schoolSky";
 
   const [open, setOpen] = useState(false);
+  const Form = () =>
+    type === "delete" && id ? (
+      <form
+        action=""
+        className="flex flex-col p-4 items-center justify-center gap-5"
+      >
+        <span className="text-lg font-semibold text-center">
+          Are you sure you want to delete this {table}?
+        </span>
+        <div className="flex gap-4 ">
+          <button
+            onClick={() => setOpen(false)}
+            className="cursor-pointer py-2 px-3 border-none rounded-lg font-semibold hover:bg-gray-200"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="cursor-pointer py-2 px-3 border-none font-semibold bg-red-500 text-white rounded-lg"
+          >
+            Delete
+          </button>
+        </div>
+      </form>
+    ) : type === "update" || (type === "create" && table === "teacher") ? (
+      <TeacherForm data={data} type={type} />
+    ) : (
+      "Create or Update File "
+    );
 
-  const handleClick = () => {
-    console.log("Clicked");
-  };
   return (
     <>
       <button
         className={`${size} center rounded-full p-2 cursor-pointer ${bgColor}`}
         onClick={() => {
-          handleClick();
           setOpen(true);
         }}
       >
@@ -62,6 +96,7 @@ const FormModal: React.FC<FormModalProps> = ({ table, type, data, id }) => {
             >
               <Image src="/close.png" alt="" width={14} height={14} />
             </button>
+            <Form />
           </div>
         </div>
       )}

@@ -1174,3 +1174,17 @@ export const calendarEvents = [
     end: new Date(2025, 6, 18, 14, 45),
   },
 ];
+
+export const singleTeacherSampleData = {
+  id: 1,
+  username: "OlaDev",
+  email: "devlakunle@gmail.com",
+  firstName: "Ayoola",
+  lastName: "Bolaji",
+  phone: +2348162958348,
+  address: "234 Bola Ade Oshodi",
+  bloodType: "A+",
+  birthday: "2025-06-14",
+  sex: "female",
+  img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa3Y-CHObEMwumUb7VQ2-GvZ-a6mOn3OF57g&s",
+};

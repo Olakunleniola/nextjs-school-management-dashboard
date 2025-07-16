@@ -1,9 +1,11 @@
 import Announcement from "@/components/Announcement";
 import BigCalendar from "@/components/BigCalendar";
+import FormModal from "@/components/FormModal";
 import Performance from "@/components/Performance";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { singleTeacherSampleData } from "../../../../../../lib/Data";
 
 const SingleTeacherPage = () => {
   return (
@@ -26,9 +28,17 @@ const SingleTeacherPage = () => {
               </div>
             </div>
             <div className="md:flex-1 w-full flex flex-col gap-2 justify-between">
-              <h1 className="text-xl font-semibold capitalize">
-                Leonard Snejder
-              </h1>
+              <div className="flex gap-4 items-center justify-between">
+                <h1 className="text-xl font-semibold capitalize">
+                  Leonard Snejder
+                </h1>
+                <FormModal
+                  type="update"
+                  table="teacher"
+                  data={singleTeacherSampleData}
+                  bgdColor="black"
+                />
+              </div>
               <p className="text-sm text-gray-500">
                 Loren ipsunn asedlkfd csksmm vsdlksmsd
               </p>
