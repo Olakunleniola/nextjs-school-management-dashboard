@@ -1188,3 +1188,19 @@ export const singleTeacherSampleData = {
   sex: "female",
   img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQa3Y-CHObEMwumUb7VQ2-GvZ-a6mOn3OF57g&s",
 };
+
+export const singleStudentSampleData = {
+  id: 101,
+  username: "studentJane",
+  email: "jane.doe@studentmail.com",
+  firstName: "Jane",
+  lastName: "Doe",
+  phone: 2348123456789,
+  address: "12 Unity Street, Lagos",
+  bloodType: "O-",
+  birthday: "2010-09-23",
+  sex: "female",
+  img: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=facearea&w=400&h=400&facepad=2",
+};
+
+// Create a school management database schema there will be admin with all privileges and teachers, each teacher can have multiple subject, lessons and classes, and in each class there will be a student a student have a parent, class, grades, assignment and exam and test  results, attendance and  report card. Parents can have multiple children each grade has multiple student and classes each class have a grade , multiple student supervisor(teacher) and lessons, a lesson has a class subject teacher multiple exam and assignment and each exam and assignment has a result . in the attendance table the student will be present or absent for the given lesson  

@@ -36,7 +36,7 @@ const SingleTeacherPage = () => {
                   type="update"
                   table="teacher"
                   data={singleTeacherSampleData}
-                  bgdColor="black"
+                  bgdColor="bg-black"
                 />
               </div>
               <p className="text-sm text-gray-500">

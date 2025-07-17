@@ -3,7 +3,15 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import TeacherForm from "./forms/TeacherForm";
+import { JSX } from "react/jsx-runtime";
+import dynamic from "next/dynamic";
+
+const TeacherForm = dynamic(() => import("./forms/TeacherForm"), {
+  loading: () => <h1>Loading...........</h1>
+})
+const StudentForm = dynamic(() => import("./forms/StudentForm"), {
+  loading: () => <h1>Loading...........</h1>
+})
 
 interface FormModalProps {
   table:
@@ -24,6 +32,13 @@ interface FormModalProps {
   id?: number;
   bgdColor?: string;
 }
+
+const forms: {
+  [key: string]: (data: any, type: "create" | "update") => JSX.Element;
+} = {
+  teacher: (data, type) => <TeacherForm data={data} type={type} />,
+  student: (data, type) => <StudentForm data={data} type={type} />,
+};
 
 const FormModal: React.FC<FormModalProps> = ({
   table,
@@ -66,10 +81,10 @@ const FormModal: React.FC<FormModalProps> = ({
           </button>
         </div>
       </form>
-    ) : type === "update" || (type === "create" && table === "teacher") ? (
-      <TeacherForm data={data} type={type} />
+    ) : type === "update" || type === "create" ? (
+      forms[table](data, type)
     ) : (
-      "Create or Update File "
+      "Forms not found "
     );
 
   return (
