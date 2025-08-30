@@ -14,7 +14,6 @@ const Pagination = ({ page, count }: { page: number; count: number }) => {
     router.push(`${window.location.pathname}?${params}`);
   };
 
-  console.log(hasPrev, hasNext);
   return (
     <div className="center-btw text-gray-500 w-full">
       <button

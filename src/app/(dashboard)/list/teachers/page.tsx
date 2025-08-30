@@ -86,7 +86,7 @@ const renderCell = (items: TeacherList) => (
 const TeachersListPage = async ({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | undefined };
+  searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
