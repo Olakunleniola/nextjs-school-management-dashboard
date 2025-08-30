@@ -1,5 +1,5 @@
 import Pagination from "@/components/Pagination";
-import Search from "@/components/Search";
+import Search from "@/components/TableSearch";
 import Table from "@/components/Table";
 import Image from "next/image";
 import { role, classesData } from "../../../../../lib/Data";

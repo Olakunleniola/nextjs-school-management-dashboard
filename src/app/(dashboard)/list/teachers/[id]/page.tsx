@@ -62,7 +62,7 @@ const SingleTeacherPage = () => {
                 </div>
                 <div className="flex items-center gap-2 md:w-1/3 lg:w-full w-full 2xl:w-1/3">
                   <Image src="/phone.png" alt="logo" width={14} height={14} />
-                  <span className="text-blue-700 underline cursor-pointer hover:text-red-400">
+                  <span className="text-blue-700 underline cursor-pointer hover:text-red-400 text-xs">
                     +234-816-29348
                   </span>
                 </div>

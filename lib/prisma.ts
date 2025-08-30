@@ -1,13 +1,18 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@/generated/prisma";
 
-const PrismaClientSignleton = () => new PrismaClient()
+// Create PrismaClient instance
+const createPrismaClient = () => new PrismaClient();
 
+// Extend globalThis to cache prisma in dev (so hot reloads don’t spawn multiple clients)
 declare const globalThis: {
-    prismaGlobal: ReturnType<typeof PrismaClientSignleton>;
-} & typeof global
+  prismaGlobal: ReturnType<typeof createPrismaClient>;
+} & typeof global;
 
-const prisma = globalThis.prismaGlobal ?? PrismaClientSignleton;
+// Either use cached PrismaClient or create a new one
+const prisma = globalThis.prismaGlobal ?? createPrismaClient();
 
-export default prisma
+if (process.env.NODE_ENV !== "production") {
+  globalThis.prismaGlobal = prisma;
+}
 
-if (process.env.NODE_ENV !== 'production') globalThis.prismaGlobal= prisma
+export default prisma;

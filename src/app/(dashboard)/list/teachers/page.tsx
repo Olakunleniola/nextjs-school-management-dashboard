@@ -1,22 +1,15 @@
 import Pagination from "@/components/Pagination";
-import Search from "@/components/Search";
+import Search from "@/components/TableSearch";
 import Table from "@/components/Table";
 import Image from "next/image";
 import Link from "next/link";
-import { role, teachersData } from "../../../../../lib/Data";
+import { role } from "@/lib/Data";
 import FormModal from "@/components/FormModal";
+import prisma from "@/lib/prisma";
+import { Teacher, Class, Subject, Prisma } from "@/generated/prisma";
+import { ITEMS_PER_PAGE } from "@/lib/settings";
 
-interface Teacher {
-  id: number;
-  teacherId: string;
-  name: string;
-  email?: string;
-  photo: string;
-  subjects: string[];
-  classes: string[];
-  address: string;
-  phone: string;
-}
+type TeacherList = Teacher & { subjects: Subject[] } & { classes: Class[] };
 
 const columns = [
   { header: "Info", accessor: "info" },
@@ -48,44 +41,91 @@ const columns = [
   { header: "Actions", accessor: "action" },
 ];
 
-const TeachersListPage = () => {
-  const renderCell = (items: Teacher) => (
-    <tr
-      key={items.id}
-      className="border-b border-gray-200 even:bg-slate-50 text-xs hover:bg-schoolPurpleLight xl:text-sm"
-    >
-      <td className="flex items-center p-4 gap-4">
-        <Image
-          src={items.photo}
-          alt=""
-          width={40}
-          height={40}
-          className="md:hidden xl:block w-10 h-10 rounded-full object-cover"
-        />
-        <div className="flex flex-col">
-          <h3 className="font-semibold ">{items.name}</h3>
-          <p className="text-xs text-gray-500">{items?.email}</p>
-        </div>
-      </td>
-      <td className="hidden md:table-cell">{items.teacherId}</td>
-      <td className="hidden md:table-cell">{items.subjects.join(",")}</td>
-      <td className="hidden md:table-cell">{items.classes.join(",")}</td>
-      <td className="hidden lg:table-cell">{items.phone}</td>
-      <td className="hidden lg:table-cell">{items.address}</td>
-      <td>
-        <div className="flex items-center gap-2">
-          <Link href={`/list/teachers/${items.id}`}>
-            <button className="w-7 h-7 p-2 rounded-full bg-schoolSky cursor-pointer">
-              <Image src="/view.png" alt="" width={16} height={16} />
-            </button>
-          </Link>
-          {role === "admin" && (
-            <FormModal type="delete" table="teacher" id={items.id} />
-          )}
-        </div>
-      </td>
-    </tr>
-  );
+const renderCell = (items: TeacherList) => (
+  <tr
+    key={items.id}
+    className="border-b border-gray-200 even:bg-slate-50 text-xs hover:bg-schoolPurpleLight xl:text-sm"
+  >
+    <td className="flex items-center p-4 gap-4">
+      <Image
+        src={items.img || "/avatar.png"}
+        alt=""
+        width={40}
+        height={40}
+        className="md:hidden xl:block w-10 h-10 rounded-full object-cover"
+      />
+      <div className="flex flex-col">
+        <h3 className="font-semibold ">{items.name}</h3>
+        <p className="text-xs text-gray-500">{items?.email}</p>
+      </div>
+    </td>
+    <td className="hidden md:table-cell">{items.username}</td>
+    <td className="hidden md:table-cell">
+      {items.subjects.map((subject) => subject.name).join(",")}
+    </td>
+    <td className="hidden md:table-cell">
+      {items.classes.map((classItem) => classItem.name).join(",")}
+    </td>
+    <td className="hidden lg:table-cell">{items.phone}</td>
+    <td className="hidden lg:table-cell">{items.address}</td>
+    <td>
+      <div className="flex items-center gap-2">
+        <Link href={`/list/teachers/${items.id}`}>
+          <button className="w-7 h-7 p-2 rounded-full bg-schoolSky cursor-pointer">
+            <Image src="/view.png" alt="" width={16} height={16} />
+          </button>
+        </Link>
+        {role === "admin" && (
+          <FormModal type="delete" table="teacher" id={items.id} />
+        )}
+      </div>
+    </td>
+  </tr>
+);
+
+const TeachersListPage = async ({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | undefined };
+}) => {
+  const { page, ...queryParams } = await searchParams;
+  const p = page ? parseInt(page) : 1;
+
+  // SETUP URL PARAMS CONDITION
+  const query: Prisma.TeacherWhereInput = {};
+  if (Object.keys(queryParams).length) {
+    for (const [key, value] of Object.entries(queryParams)) {
+      if (value !== undefined) {
+        switch (key) {
+          case "classid": {
+            query.lessons = {
+              some: { classId: parseInt(value) },
+            };
+          }
+          case "search": {
+            query.name = { contains: value, mode: "insensitive" };
+          }
+        }
+      }
+    }
+  }
+
+  const [data, count] = await prisma.$transaction([
+    prisma.teacher.findMany({
+      where: query,
+      include: {
+        subjects: true,
+        classes: true,
+      },
+      take: ITEMS_PER_PAGE,
+      skip: ITEMS_PER_PAGE * (p - 1),
+    }),
+
+    prisma.teacher.count({
+      where: query,
+    }),
+  ]);
+
   return (
     <div className="flex-1 mx-4 p-4 bg-white rounded-lg space-y-6 ">
       {/* TOP  */}
@@ -112,9 +152,9 @@ const TeachersListPage = () => {
         </div>
       </div>
       {/* CONTENT */}
-      <Table columns={columns} renderCell={renderCell} data={teachersData} />
+      <Table columns={columns} renderCell={renderCell} data={data} />
       {/* PAGINATION */}
-      <Pagination />
+      <Pagination page={p} count={count} />
     </div>
   );
 };
