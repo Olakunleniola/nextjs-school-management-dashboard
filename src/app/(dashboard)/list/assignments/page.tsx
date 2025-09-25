@@ -116,7 +116,7 @@ const ExamListPage = async ({
       skip: tableItem(p),
       take: ITEMS_PER_PAGE,
     }),
-    prisma.assignment.count(),
+    prisma.assignment.count({ where: query }),
   ]);
 
   return (
