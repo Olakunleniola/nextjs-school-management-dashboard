@@ -5,7 +5,7 @@ import Performance from "@/components/Performance";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { singleStudentSampleData } from "../../../../../../lib/Data";
+import { singleStudentSampleData } from "@/lib/Data";
 
 const SingleStudentPage = () => {
   return (
@@ -136,19 +136,34 @@ const SingleStudentPage = () => {
         <div className="bg-white p-4 rounded-lg">
           <h1 className="text-xl font-semibold">Shortcuts</h1>
           <div className="mt-4 flex flex-wrap gap-3 text-xs text-gray-500">
-            <Link className="p-3 rounded-md bg-schoolSky" href="/">
+            <Link
+              className="p-3 rounded-md bg-schoolSky"
+              href={`/list/lessons?studentid=${"student1"}`}
+            >
               Student&apos;s Lessons
             </Link>
-            <Link className="p-3 rounded-md bg-schoolPurpleLight " href="/">
+            <Link
+              className="p-3 rounded-md bg-schoolPurpleLight "
+              href={`/list/teachers?studentid=${"student1"}`}
+            >
               Student&apos;s Teachers
             </Link>
-            <Link className="p-3 rounded-md bg-schoolYellowLight" href="/">
+            <Link
+              className="p-3 rounded-md bg-schoolYellowLight"
+              href={`/list/results?studentid=${"student1"}`}
+            >
               Student&apos;s Results
             </Link>
-            <Link className="p-3 rounded-md bg-pink-50" href="/">
+            <Link
+              className="p-3 rounded-md bg-pink-50"
+              href={`/list/exams?studentid=${"student1"}`}
+            >
               Student&apos;s Exams
             </Link>
-            <Link className="p-3 rounded-md bg-schoolSkyLight" href="/">
+            <Link
+              className="p-3 rounded-md bg-schoolSkyLight"
+              href={`/list/assignments?studentid=${"student1"}`}
+            >
               Student&apos;s Assignments
             </Link>
           </div>

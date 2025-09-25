@@ -76,7 +76,7 @@ const ExamListPage = () => {
       {/* CONTENT */}
       <Table columns={columns} renderCell={renderCell} data={resultsData} />
       {/* PAGINATION */}
-      <Pagination />
+      {/* <Pagination /> */}
     </div>
   );
 };

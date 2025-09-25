@@ -14,7 +14,7 @@ type StudentProp = Student & { class: Class };
 const columns = [
   { header: "Info", accessor: "info" },
   {
-    header: "stuent ID",
+    header: "Student ID",
     accessor: "studentId",
     className: "hidden md:table-cell",
   },
@@ -87,19 +87,24 @@ const StudentsListPage = async ({
     for (const [key, value] of Object.entries(queryParams)) {
       if (value !== undefined) {
         switch (key) {
-          case "teacherid":{
-            query.class = {
-              lessons : {
-                some: {
-                  teacherId: value
-                }
-              }
+          case "teacherid":
+            {
+              query.class = {
+                lessons: {
+                  some: {
+                    teacherId: value,
+                  },
+                },
+              };
             }
-          }
-          break;
-          case "search": {
-            query.name = { contains: value, mode: "insensitive" };
-          }
+            break;
+          case "search":
+            {
+              query.name = { contains: value, mode: "insensitive" };
+            }
+            break;
+          default:
+            break;
         }
       }
     }
@@ -114,7 +119,7 @@ const StudentsListPage = async ({
       take: ITEMS_PER_PAGE,
       skip: ITEMS_PER_PAGE * (p - 1),
     }),
-    prisma.student.count({where:query}),
+    prisma.student.count({ where: query }),
   ]);
   return (
     <div className="flex-1 mx-4 p-4 bg-white rounded-lg space-y-6 ">
