@@ -6,7 +6,8 @@ import { role } from "../../../../../lib/Data";
 import FormModal from "@/components/FormModal";
 import { Prisma } from "@/generated/prisma";
 import prisma from "@/lib/prisma";
-import { formatDate, ITEMS_PER_PAGE, tableItem } from "@/lib/settings";
+import { ITEMS_PER_PAGE } from "@/lib/settings";
+import { formatDate, tableItem } from "@/lib/utils";
 
 type ResultProp = {
   id: number;

@@ -6,7 +6,8 @@ import { role } from "@/lib/Data";
 import FormModal from "@/components/FormModal";
 import { Class, Exam, Prisma, Subject, Teacher } from "@/generated/prisma";
 import prisma from "@/lib/prisma";
-import { ITEMS_PER_PAGE, tableItem } from "@/lib/settings";
+import { ITEMS_PER_PAGE } from "@/lib/settings";
+import { tableItem } from "@/lib/utils";
 
 type ExamProp = Exam & {
   lesson: {

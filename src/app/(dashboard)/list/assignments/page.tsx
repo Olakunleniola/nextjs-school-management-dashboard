@@ -12,7 +12,8 @@ import {
   Subject,
   Prisma,
 } from "@/generated/prisma";
-import { formatDate, ITEMS_PER_PAGE, tableItem } from "@/lib/settings";
+import { ITEMS_PER_PAGE } from "@/lib/settings";
+import { formatDate, tableItem } from "@/lib/utils";
 
 type AssignmentProp = Assignment & {
   lesson: {
