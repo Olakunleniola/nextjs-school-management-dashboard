@@ -2,15 +2,14 @@ import Pagination from "@/components/Pagination";
 import Search from "@/components/TableSearch";
 import Table from "@/components/Table";
 import Image from "next/image";
-import { role, announcementsData } from "../../../../../lib/Data";
+import { role } from "../../../../../lib/Data";
 import FormModal from "@/components/FormModal";
+import { Announcement, Class, Prisma } from "@/generated/prisma";
+import { formatDate, tableItem } from "@/lib/utils";
+import prisma from "@/lib/prisma";
+import { ITEMS_PER_PAGE } from "@/lib/settings";
 
-interface AnnouncementProp {
-  id: number;
-  title: string;
-  class: string;
-  date: string;
-}
+type AnnouncementProp = Announcement & { class: Class };
 
 const columns = [
   { header: "Title", accessor: "title" },
@@ -19,27 +18,58 @@ const columns = [
   { header: "Actions", accessor: "action" },
 ];
 
-const ExamListPage = () => {
-  const renderCell = (items: AnnouncementProp) => (
-    <tr
-      key={items.id}
-      className="border-b border-gray-200 even:bg-slate-50 text-xs hover:bg-schoolPurpleLight xl:text-sm"
-    >
-      <td className="flex items-center p-4 gap-4">{items.title}</td>
-      <td>{items.class}</td>
-      <td className="hidden md:table-cell">{items.date}</td>
-      <td>
-        <div className="flex items-center gap-2">
-          {role === "admin" && (
-            <>
-              <FormModal type="update" table="announcement" data={items} />
-              <FormModal type="delete" table="announcement" id={items.id} />
-            </>
-          )}
-        </div>
-      </td>
-    </tr>
-  );
+const renderCell = (items: AnnouncementProp) => (
+  <tr
+    key={items.id}
+    className="border-b border-gray-200 even:bg-slate-50 text-xs hover:bg-schoolPurpleLight xl:text-sm"
+  >
+    <td className="flex items-center p-4 gap-4">{items.title}</td>
+    <td>{items.class.name}</td>
+    <td className="hidden md:table-cell">{formatDate(items.date)}</td>
+    <td>
+      <div className="flex items-center gap-2">
+        {role === "admin" && (
+          <>
+            <FormModal type="update" table="announcement" data={items} />
+            <FormModal type="delete" table="announcement" id={items.id} />
+          </>
+        )}
+      </div>
+    </td>
+  </tr>
+);
+
+const ExamListPage = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | undefined }>;
+}) => {
+  const { page, ...queryParams } = await searchParams;
+  const p = page ? parseInt(page) : 1;
+  const query: Prisma.AnnouncementWhereInput = {};
+  if (Object.keys(queryParams).length) {
+    for (const [key, value] of Object.entries(queryParams)) {
+      switch (key) {
+        case "search":
+          {
+            query.title = { contains: value, mode: "insensitive" };
+          }
+          break;
+      }
+    }
+  }
+
+  const [data, count] = await prisma.$transaction([
+    prisma.announcement.findMany({
+      where: query,
+      include: {
+        class: { select: { name: true } },
+      },
+      take: ITEMS_PER_PAGE,
+      skip: tableItem(p),
+    }),
+    prisma.announcement.count({ where: query }),
+  ]);
   return (
     <div className="flex-1 mx-4 p-4 bg-white rounded-lg space-y-6 ">
       {/* TOP  */}
@@ -68,13 +98,9 @@ const ExamListPage = () => {
         </div>
       </div>
       {/* CONTENT */}
-      <Table
-        columns={columns}
-        renderCell={renderCell}
-        data={announcementsData}
-      />
+      <Table columns={columns} renderCell={renderCell} data={data} />
       {/* PAGINATION */}
-      <Pagination />
+      <Pagination page={p} count={count} />
     </div>
   );
 };
