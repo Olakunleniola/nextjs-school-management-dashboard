@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@clerk/elements": "^0.23.66",
+    "@clerk/nextjs": "^6.33.0",
     "@hookform/resolvers": "^5.1.1",
     "@prisma/client": "^6.14.0",
     "@types/react-big-calendar": "^1.16.2",

@@ -1,3 +1,4 @@
+import { UserButton } from "@clerk/nextjs";
 import Image from "next/image";
 import React from "react";
 
@@ -47,13 +48,14 @@ const Navbar = () => {
             Admin
           </span>
         </div>
-        <Image
+        {/* <Image
           src="/avatar.png"
           alt="user-logo"
           width={36}
           height={36}
           className="rounded-full object-contain"
-        />
+        /> */}
+        <UserButton />
       </div>
     </div>
   );
