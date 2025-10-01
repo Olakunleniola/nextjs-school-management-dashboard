@@ -1,8 +1,12 @@
 import Image from "next/image";
-import { menuItems, role } from "../../lib/Data";
+import { menuItems } from "../../lib/Data";
 import Link from "next/link";
+import { currentUser } from "@clerk/nextjs/server";
 
-const Sidebar = () => {
+
+const Sidebar = async() => {
+  const user = await currentUser()
+  const role = user?.publicMetadata?.role as string
   return (
     <div className="w-[14%] md:w-[8%] lg:w-[18%] xl:[14%] p-4 overflow-auto">
       {/* Logo and brand  */}

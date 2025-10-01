@@ -9,3 +9,8 @@ export const formatTime = (arg: Date) =>
     minute: "2-digit",
     hour12: false,
   });
+
+
+export function capitalizeWords(str: string): string {
+  return str.replace(/\b\w/g, char => char.toUpperCase());
+}

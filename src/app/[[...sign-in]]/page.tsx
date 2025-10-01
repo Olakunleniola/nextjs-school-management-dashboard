@@ -21,7 +21,7 @@ function LogInPage() {
       <SignIn.Root>
         <SignIn.Step
           name="start"
-          className="bg-white p-12 rounded-2xl flex flex-col gap-2 w-[350px]"
+          className="bg-white p-12 rounded-2xl flex flex-col gap-2 w-[350px] shadow-2xl"
         >
           <h1 className="flex items-center gap-2 xl:text-2xl lg:text-md text-md font-extrabold justify-center">
             <Image
@@ -39,7 +39,7 @@ function LogInPage() {
           <Clerk.GlobalError className="block text-sm text-red-400" />
           <div className="space-y-6">
             <Clerk.Field name="identifier" className="space-y-2">
-              <Clerk.Label className="text-sm font-medium text-gray-400 my-1">
+              <Clerk.Label className="text-sm font-medium text-gray-700 my-1">
                 Username
               </Clerk.Label>
               <Clerk.Input
@@ -50,7 +50,7 @@ function LogInPage() {
               <Clerk.FieldError className="block text-sm text-red-400" />
             </Clerk.Field>
             <Clerk.Field name="password" className="space-y-2">
-              <Clerk.Label className="text-sm font-medium text-gray-400">
+              <Clerk.Label className="text-sm font-medium text-gray-700">
                 Password
               </Clerk.Label>
               <Clerk.Input
@@ -67,7 +67,10 @@ function LogInPage() {
             className="w-full flex items-center justify-center my-1 rounded-md bg-blue-600 px-3.5 py-1.5 text-center text-sm font-medium text-white shadow hover:bg-blue-500 disabled:bg-blue-200"
           >
             Login
-            <div className={`${!isLoaded ? "flex" : "hidden"} items-center ml-3`} role="status">
+            <div
+              className={`${!isLoaded ? "flex" : "hidden"} items-center ml-3`}
+              role="status"
+            >
               <div className="size-4 rounded-full border-3 border-gray-300 border-t-blue-500 animate-spin"></div>
               <span className="sr-only">Loading...</span>
             </div>
