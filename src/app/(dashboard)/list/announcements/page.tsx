@@ -7,6 +7,7 @@ import { Announcement, Class, Prisma } from "@/generated/prisma";
 import { formatDate, getUserRole, tableItem } from "@/lib/utils";
 import prisma from "@/lib/prisma";
 import { ITEMS_PER_PAGE } from "@/lib/settings";
+import { lessonsData } from "@/lib/Data";
 
 type AnnouncementProp = Announcement & { class: Class };
 
@@ -22,11 +23,46 @@ const AnnouncementListPage = async ({
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  const {role} = await getUserRole();
-  console.log(role);
+  const { role, userId } = await getUserRole();
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
   const query: Prisma.AnnouncementWhereInput = {};
+  // Parameter Conditions
+  if (Object.keys(queryParams).length) {
+    for (const [key, value] of Object.entries(queryParams)) {
+      switch (key) {
+        case "search":
+          {
+            query.title = { contains: value, mode: "insensitive" };
+          }
+          break;
+      }
+    }
+  }
+
+  // Role Conditions
+  const roleConditions = {
+    teacher: { lessons: { some: { teacherId: userId! } } },
+    student: { students: { some: { id: userId! } } },
+    parent: { students: { some: { parentId: userId! } } },
+  };
+
+  query.OR = [
+    { classId: null },
+    { class: roleConditions[role as keyof typeof roleConditions] },
+  ];
+
+  const [data, count] = await prisma.$transaction([
+    prisma.announcement.findMany({
+      where: query,
+      include: {
+        class: { select: { name: true } },
+      },
+      take: ITEMS_PER_PAGE,
+      skip: tableItem(p),
+    }),
+    prisma.announcement.count({ where: query }),
+  ]);
 
   const renderCell = (items: AnnouncementProp) => (
     <tr
@@ -34,7 +70,7 @@ const AnnouncementListPage = async ({
       className="border-b border-gray-200 even:bg-slate-50 text-xs hover:bg-schoolPurpleLight xl:text-sm"
     >
       <td className="flex items-center p-4 gap-4">{items.title}</td>
-      <td>{items.class.name}</td>
+      <td>{items?.class?.name || "-"}</td>
       <td className="hidden md:table-cell">{formatDate(items.date)}</td>
       <td>
         <div className="flex items-center gap-2">
@@ -49,29 +85,6 @@ const AnnouncementListPage = async ({
     </tr>
   );
 
-  if (Object.keys(queryParams).length) {
-    for (const [key, value] of Object.entries(queryParams)) {
-      switch (key) {
-        case "search":
-          {
-            query.title = { contains: value, mode: "insensitive" };
-          }
-          break;
-      }
-    }
-  }
-
-  const [data, count] = await prisma.$transaction([
-    prisma.announcement.findMany({
-      where: query,
-      include: {
-        class: { select: { name: true } },
-      },
-      take: ITEMS_PER_PAGE,
-      skip: tableItem(p),
-    }),
-    prisma.announcement.count({ where: query }),
-  ]);
   return (
     <div className="flex-1 mx-4 p-4 bg-white rounded-lg space-y-6 ">
       {/* TOP  */}
