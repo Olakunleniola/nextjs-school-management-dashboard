@@ -6,8 +6,7 @@ import FormModal from "@/components/FormModal";
 import { Class, Exam, Prisma, Subject, Teacher } from "@/generated/prisma";
 import prisma from "@/lib/prisma";
 import { ITEMS_PER_PAGE } from "@/lib/settings";
-import { tableItem } from "@/lib/utils";
-import { currentUser } from "@clerk/nextjs/server";
+import { getUserRole, tableItem } from "@/lib/utils";
 
 type ExamProp = Exam & {
   lesson: {
@@ -30,8 +29,7 @@ const ExamListPage = async ({
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  const user = await currentUser();
-  const role = user?.publicMetadata?.role as string;
+  const { role } = await getUserRole();
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
 
@@ -126,6 +124,7 @@ const ExamListPage = async ({
       </td>
     </tr>
   );
+  
   return (
     <div className="flex-1 mx-4 p-4 bg-white rounded-lg space-y-6 ">
       {/* TOP  */}
