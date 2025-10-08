@@ -4,18 +4,18 @@ import React from "react";
 import { currentUser } from "@clerk/nextjs/server";
 import { capitalizeWords } from "@/lib/utils";
 
-const Navbar = async() => {
-  const user = await currentUser()
+const Navbar = async () => {
+  const user = await currentUser();
   return (
     <div className="flex items-center justify-between p-4 ">
       {/* SEARCH BAR */}
       <div className="hidden md:flex items-center gap-2 ring-[1.5px] px-2 ring-gray-300 rounded-2xl shadow-sm">
         <Image
           src="/search.png"
-          alt="search logo"
-          width={16}
-          height={16}
-          className="h-auto size-4 object-contain"
+          alt="search-logo"
+          width={20}
+          height={20}
+          className=""
         />
         <input
           type="text"

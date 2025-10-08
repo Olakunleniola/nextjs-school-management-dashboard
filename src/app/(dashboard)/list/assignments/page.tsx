@@ -2,7 +2,6 @@ import Pagination from "@/components/Pagination";
 import Search from "@/components/TableSearch";
 import Table from "@/components/Table";
 import Image from "next/image";
-import { role } from "../../../../../lib/Data";
 import FormModal from "@/components/FormModal";
 import prisma from "@/lib/prisma";
 import {
@@ -13,7 +12,7 @@ import {
   Prisma,
 } from "@/generated/prisma";
 import { ITEMS_PER_PAGE } from "@/lib/settings";
-import { formatDate, tableItem } from "@/lib/utils";
+import { formatDate, getUserRole, tableItem } from "@/lib/utils";
 
 type AssignmentProp = Assignment & {
   lesson: {
@@ -23,44 +22,28 @@ type AssignmentProp = Assignment & {
   };
 };
 
-const columns = [
+const columns = (role: string) => [
   { header: "Subject Name", accessor: "subjects" },
   { header: "Class", accessor: "class" },
   { header: "Teacher", accessor: "teacher", className: "hidden md:table-cell" },
   { header: "Due Date", accessor: "date", className: "hidden md:table-cell" },
-  { header: "Actions", accessor: "action" },
+  ...(role === "admin" || role == "teacher"
+    ? [{ header: "Actions", accessor: "action" }]
+    : []),
 ];
 
-const renderCell = (items: AssignmentProp) => (
-  <tr
-    key={items.id}
-    className="border-b border-gray-200 even:bg-slate-50 text-xs hover:bg-schoolPurpleLight xl:text-sm"
-  >
-    <td className="flex items-center p-4 gap-4">{items.lesson.subject.name}</td>
-    <td>{items.lesson.class.name}</td>
-    <td className="hidden md:table-cell">{items.lesson.teacher.name}</td>
-    <td className="hidden md:table-cell">{formatDate(items.startDate)}</td>
-    <td>
-      <div className="flex items-center gap-2">
-        {role === "admin" && (
-          <>
-            <FormModal type="update" table="assignment" data={items} />
-            <FormModal type="delete" table="assignment" id={items.id} />
-          </>
-        )}
-      </div>
-    </td>
-  </tr>
-);
-
-const ExamListPage = async ({
+const AssignmentListPage = async ({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
+  const {role, userId} = await getUserRole()
+  console.log(role, userId)
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
   const query: Prisma.AssignmentWhereInput = {};
+  query.lesson = {}
+  // URL PARAMETER CONDITIONS
   if (Object.keys(queryParams).length) {
     for (const [key, value] of Object.entries(queryParams)) {
       if (value !== undefined) {
@@ -101,6 +84,27 @@ const ExamListPage = async ({
       }
     }
   }
+  // ROLE CONDITIONS
+  switch (role){
+    case "admin":
+    break;
+    case "teacher":
+      query.lesson.teacherId =  userId!;
+      break;
+    case "student":
+      query.lesson.class = {
+        students: {some: {id: userId!}}
+      }
+      break;
+    case "parent":
+      query.lesson.class = {
+        students: {some: {parentId: userId!}}
+      }
+      break;
+    default: 
+      break
+
+  }
 
   const [data, count] = await prisma.$transaction([
     prisma.assignment.findMany({
@@ -120,6 +124,30 @@ const ExamListPage = async ({
     prisma.assignment.count({ where: query }),
   ]);
 
+  const renderCell = (items: AssignmentProp) => (
+    <tr
+      key={items.id}
+      className="border-b border-gray-200 even:bg-slate-50 text-xs hover:bg-schoolPurpleLight xl:text-sm"
+    >
+      <td className="flex items-center p-4 gap-4">
+        {items.lesson.subject.name}
+      </td>
+      <td>{items.lesson.class.name}</td>
+      <td className="hidden md:table-cell">{items.lesson.teacher.name}</td>
+      <td className="hidden md:table-cell">{formatDate(items.startDate)}</td>
+      <td>
+        <div className="flex items-center gap-2">
+          {role === "admin" || role==="teacher" && (
+            <>
+              <FormModal type="update" table="assignment" data={items} />
+              <FormModal type="delete" table="assignment" id={items.id} />
+            </>
+          )}
+        </div>
+      </td>
+    </tr>
+  );
+
   return (
     <div className="flex-1 mx-4 p-4 bg-white rounded-lg space-y-6 ">
       {/* TOP  */}
@@ -136,21 +164,25 @@ const ExamListPage = async ({
                 alt="filter-logo"
                 width={20}
                 height={20}
+                className="h-auto"
               />
             </button>
             <button className="w-8 h-8 center rounded-full bg-schoolYellow p-2 cursor-pointer">
               <Image src="/sort.png" alt="sort-logo" width={20} height={20} />
             </button>
-            {role === "admin" && <FormModal type="create" table="assignment" />}
+            {role === "admin" ||
+              (role === "teacher" && (
+                <FormModal type="create" table="assignment" />
+              ))}
           </div>
         </div>
       </div>
       {/* CONTENT */}
-      <Table columns={columns} renderCell={renderCell} data={data} />
+      <Table columns={columns(role)} renderCell={renderCell} data={data} />
       {/* PAGINATION */}
       <Pagination count={count} page={p} />
     </div>
   );
 };
 
-export default ExamListPage;
+export default AssignmentListPage;

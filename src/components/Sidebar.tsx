@@ -1,27 +1,140 @@
-import Image from "next/image";
-import { menuItems } from "../../lib/Data";
-import Link from "next/link";
 import { currentUser } from "@clerk/nextjs/server";
+import Image from "next/image";
+import Link from "next/link";
 
+const menuItems = [
+  {
+    title: "MENU",
+    items: [
+      {
+        icon: "/home.png",
+        label: "Home",
+        href: "/",
+        visible: ["admin", "teacher", "student", "parent"],
+      },
+      {
+        icon: "/teacher.png",
+        label: "Teachers",
+        href: "/list/teachers",
+        visible: ["admin", "teacher"],
+      },
+      {
+        icon: "/student.png",
+        label: "Students",
+        href: "/list/students",
+        visible: ["admin", "teacher"],
+      },
+      {
+        icon: "/parent.png",
+        label: "Parents",
+        href: "/list/parents",
+        visible: ["admin", "teacher"],
+      },
+      {
+        icon: "/subjects.png",
+        label: "Subjects",
+        href: "/list/subjects",
+        visible: ["admin"],
+      },
+      {
+        icon: "/class.png",
+        label: "Classes",
+        href: "/list/classes",
+        visible: ["admin", "teacher"],
+      },
+      {
+        icon: "/lesson.png",
+        label: "Lessons",
+        href: "/list/lessons",
+        visible: ["admin", "teacher"],
+      },
+      {
+        icon: "/exam.png",
+        label: "Exams",
+        href: "/list/exams",
+        visible: ["admin", "teacher", "student", "parent"],
+      },
+      {
+        icon: "/assignment.png",
+        label: "Assignments",
+        href: "/list/assignments",
+        visible: ["admin", "teacher", "student", "parent"],
+      },
+      {
+        icon: "/results.png",
+        label: "Results",
+        href: "/list/results",
+        visible: ["admin", "teacher", "student", "parent"],
+      },
+      {
+        icon: "/attendance.png",
+        label: "Attendance",
+        href: "/list/attendance",
+        visible: ["admin", "teacher", "student", "parent"],
+      },
+      {
+        icon: "/calendar.png",
+        label: "Events",
+        href: "/list/events",
+        visible: ["admin", "teacher", "student", "parent"],
+      },
+      {
+        icon: "/message.png",
+        label: "Messages",
+        href: "/list/messages",
+        visible: ["admin", "teacher", "student", "parent"],
+      },
+      {
+        icon: "/announcement.png",
+        label: "Announcements",
+        href: "/list/announcements",
+        visible: ["admin", "teacher", "student", "parent"],
+      },
+    ],
+  },
+  {
+    title: "OTHER",
+    items: [
+      {
+        icon: "/profile.png",
+        label: "Profile",
+        href: "/profile",
+        visible: ["admin", "teacher", "student", "parent"],
+      },
+      {
+        icon: "/setting.png",
+        label: "Settings",
+        href: "/settings",
+        visible: ["admin", "teacher", "student", "parent"],
+      },
+      {
+        icon: "/logout.png",
+        label: "Logout",
+        href: "/logout",
+        visible: ["admin", "teacher", "student", "parent"],
+      },
+    ],
+  },
+];
 
-const Sidebar = async() => {
-  const user = await currentUser()
-  const role = user?.publicMetadata?.role as string
+const Sidebar = async () => {
+  const user = await currentUser();
+  const role = user?.publicMetadata?.role as string;
   return (
-    <div className="w-[14%] md:w-[8%] lg:w-[18%] xl:[14%] p-4 overflow-auto">
+    <div className="w-[13%] md:w-[8%] lg:w-[18%] xl:[14%] p-4 overflow-auto">
       {/* Logo and brand  */}
       <Link
         href="/"
         className="flex items-center justify-center lg:justify-start gap-1 xl:gap-2"
       >
         <Image
-          src="/school-logo.png"
+          src="/schoolsphere-logo.png"
           alt="SchoolSphere Logo"
           width={40}
           height={40}
-          className="h-auto"
+          className="h-auto lg:w-10 w-2"
         />
-        <span className="xl:text-2xl lg:text-md text-md font-extrabold hidden lg:block leading-2 text-orange-400">
+        <span className="xl:text-2xl lg:text-md text-sm font-extrabold hidden lg:block leading-2 text-orange-400">
           School<span className="text-teal-400">Sphere</span>
         </span>
       </Link>
