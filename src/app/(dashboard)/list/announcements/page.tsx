@@ -49,7 +49,7 @@ const AnnouncementListPage = async ({
 
   query.OR = [
     { classId: null },
-    { class: roleConditions[role as keyof typeof roleConditions] },
+    { class: roleConditions[role as keyof typeof roleConditions] || {} },
   ];
 
   const [data, count] = await prisma.$transaction([

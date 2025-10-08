@@ -21,7 +21,9 @@ const columns = (role: string | null) => [
   { header: "Class", accessor: "class" },
   { header: "Teacher", accessor: "teacher", className: "hidden md:table-cell" },
   { header: "Date", accessor: "date", className: "hidden md:table-cell" },
-  ...(role === "admin" ? [{ header: "Actions", accessor: "action" }] : []),
+  ...(role === "admin" || role === "teacher"
+    ? [{ header: "Actions", accessor: "action" }]
+    : []),
 ];
 
 const ExamListPage = async ({
@@ -29,11 +31,12 @@ const ExamListPage = async ({
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  const { role } = await getUserRole();
+  const { role, userId } = await getUserRole();
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
-
   const query: Prisma.ExamWhereInput = {};
+  query.lesson = {};
+  // Parameter Conditions
   if (Object.keys(queryParams).length) {
     for (const [key, value] of Object.entries(queryParams)) {
       if (value !== undefined) {
@@ -55,28 +58,32 @@ const ExamListPage = async ({
             }
             break;
           case "teacherid":
-            {
-              query.lesson = {
-                teacherId: value,
-              };
-            }
+            query.lesson.teacherId = value;
             break;
           case "studentid":
-            {
-              query.lesson = {
-                class: {
-                  students: {
-                    some: { id: value },
-                  },
-                },
-              };
-            }
+            query.lesson = { class: { students: { some: { id: value } } } };
             break;
           default:
             break;
         }
       }
     }
+  }
+  // Role Conditions
+  switch (role) {
+    case "admin":
+      break;
+    case "teacher":
+      query.lesson = { teacherId: userId! };
+      break;
+    case "student":
+      query.lesson = { class: { students: { some: { id: userId! } } } };
+      break;
+    case "parent":
+      query.lesson = { class: { students: { some: { parentId: userId! } } } };
+      break;
+    default:
+      break;
   }
 
   const [data, count] = await prisma.$transaction([
@@ -114,17 +121,18 @@ const ExamListPage = async ({
       </td>
       <td>
         <div className="flex items-center gap-2">
-          {role === "admin" && (
-            <>
-              <FormModal type="update" table="exam" data={items} />
-              <FormModal type="delete" table="exam" id={items.id} />
-            </>
-          )}
+          {role === "admin" ||
+            (role === "teacher" && (
+              <>
+                <FormModal type="update" table="exam" data={items} />
+                <FormModal type="delete" table="exam" id={items.id} />
+              </>
+            ))}
         </div>
       </td>
     </tr>
   );
-  
+
   return (
     <div className="flex-1 mx-4 p-4 bg-white rounded-lg space-y-6 ">
       {/* TOP  */}
