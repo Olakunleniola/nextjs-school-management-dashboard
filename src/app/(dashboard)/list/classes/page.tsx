@@ -35,11 +35,11 @@ const ClassesListPage = async ({
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
 }) => {
-  const { role } = await getUserRole();
+  const { role, userId } = await getUserRole();
   const { page, ...queryParams } = await searchParams;
   const p = page ? parseInt(page) : 1;
-
   const query: Prisma.ClassWhereInput = {};
+  // Parameter Conditions
   if (Object.keys(queryParams).length) {
     for (const [key, value] of Object.entries(queryParams)) {
       if (value !== undefined) {
@@ -59,6 +59,10 @@ const ClassesListPage = async ({
         }
       }
     }
+  }
+  // Role Conditions
+  if(role === "teacher") {
+    query.supervisorId = userId!
   }
 
   const [data, count] = await prisma.$transaction([
