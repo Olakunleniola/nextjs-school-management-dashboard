@@ -1,6 +1,20 @@
+import prisma from "@/lib/prisma";
 import Image from "next/image";
 
-const UserCard = ({ type }: { type: string }) => {
+const UserCard = async ({
+  type,
+}: {
+  type: "admin" | "teacher" | "student" | "parent";
+}) => {
+  const modelMap = {
+    admin: () => prisma.admin.count(),
+    teacher: () => prisma.teacher.count(),
+    student: () => prisma.student.count(),
+    parent: () => prisma.parent.count(),
+  };
+
+  const data = await modelMap[type]();
+
   return (
     <div className="odd:bg-schoolPurple even:bg-schoolYellow flex-1 p-4 min-w-[150px] rounded-2xl">
       <div className="flex justify-between items-center">
@@ -15,7 +29,7 @@ const UserCard = ({ type }: { type: string }) => {
           className="h-auto cursor-pointer"
         />
       </div>
-      <h2 className="text-2xl font-bold my-4">1,234</h2>
+      <h2 className="text-2xl font-bold my-4">{data}</h2>
       <h3 className="capitalize text-sm font-medium text-gray-500">{type}s</h3>
     </div>
   );
