@@ -1,5 +1,5 @@
 import Announcement from "@/components/Announcement";
-import AttendanceChart from "@/components/AttendanceChart";
+import AttendanceChartContainer from "@/components/AttendanceChartContainer";
 import CountChartCountainer from "@/components/CountChartContainer";
 import EventCalendar from "@/components/EventCalendar";
 import FinanceChart from "@/components/FinanceChart";
@@ -24,7 +24,7 @@ const Admin = () => {
           </div>
           {/* ATTENDANCE CHART */}
           <div className="w-full lg:w-2/3 h-[450px]">
-            <AttendanceChart />
+            <AttendanceChartContainer />
           </div>
         </div>
         {/* BOTTOM CHART */}
@@ -33,8 +33,8 @@ const Admin = () => {
         </div>
       </div>
       <div className="w-full lg:w-1/3 flex flex-col gap-5">
-       <EventCalendar />
-       <Announcement />
+        <EventCalendar />
+        <Announcement />
       </div>
     </div>
   );
