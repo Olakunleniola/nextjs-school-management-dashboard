@@ -1,11 +1,15 @@
 import Announcement from "@/components/Announcement";
 import AttendanceChartContainer from "@/components/AttendanceChartContainer";
 import CountChartCountainer from "@/components/CountChartContainer";
-import EventCalendar from "@/components/EventCalendar";
+import EventCalendarContainer from "@/components/EventCalendarContainer";
 import FinanceChart from "@/components/FinanceChart";
 import UserCard from "@/components/UserCard";
 
-const Admin = () => {
+const Admin = async({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string }>;
+}) => {
   return (
     <div className="flex flex-wrap flex-col md:flex-row p-4 gap-8 ">
       <div className="w-full lg:w-2/3 flex-1">
@@ -33,7 +37,7 @@ const Admin = () => {
         </div>
       </div>
       <div className="w-full lg:w-1/3 flex flex-col gap-5">
-        <EventCalendar />
+        <EventCalendarContainer searchParams={searchParams} />
         <Announcement />
       </div>
     </div>

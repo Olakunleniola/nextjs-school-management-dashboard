@@ -12,13 +12,6 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-// const data = [
-//   { name: "Mon", present: 50, absent: 70 },
-//   { name: "Tue", present: 90, absent: 24 },
-//   { name: "Wed", present: 84, absent: 14 },
-//   { name: "Thu", present: 90, absent: 39 },
-//   { name: "Fri", present: 89, absent: 48 },
-// ];
 
 const AttendanceChart = ({
   data,

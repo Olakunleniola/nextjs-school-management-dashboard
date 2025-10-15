@@ -44,15 +44,12 @@ const AttendanceChartContainer = async () => {
     }
   });
 
-  console.log(attendanceMap);
-
   const data = daysOfWeeek.map((day) => ({
     name: day,
     present: attendanceMap[day].present,
     absent: attendanceMap[day].absent,
   }));
 
-  console.log(data);
 
   return (
     <div className="bg-white p-5 h-full rounded-2xl">
