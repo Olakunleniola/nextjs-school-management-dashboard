@@ -1,6 +1,34 @@
-import React from "react";
+import prisma from "@/lib/prisma";
+import { formatDate, getUserRole } from "@/lib/utils";
 
-const Announcement = () => {
+const Announcement = async () => {
+  const { role, userId } = await getUserRole();
+
+  const roleConditions = {
+    teacher: { lessons: { some: { teacherId: userId! } } },
+    student: { students: { some: { id: userId! } } },
+    parent: { students: { some: { parentId: userId! } } },
+  };
+
+  const data = await prisma.announcement.findMany({
+    take: 3,
+    orderBy: { date: "desc" },
+    where: {
+      ...(role !== "admin" && {
+        OR: [
+          { classId: null },
+          { class: roleConditions[role as keyof typeof roleConditions] },
+        ],
+      }),
+    },
+  });
+
+  const bgs = [
+    "schoolSkyLight",
+    "schoolPurpleLight",
+    "schoolYellowLight",
+  ];
+
   return (
     <div className="w-full bg-white rounded-2xl px-5 py-2">
       <div className="flex justify-between items-center my-2">
@@ -10,50 +38,22 @@ const Announcement = () => {
           view all
         </span>
       </div>
-      <div className="flex flex-col gap-4">
-        <div className="bg-schoolSkyLight rounded-lg p-4">
-          <div className="center-btw">
-            <h1 className="font-semibold">lorem Ipsum lo re</h1>
-            <span className="rounded-md bg-white text-xs py-1 px-2 ">
-              12-05-2025
-            </span>
+      {data.length !== 0 &&
+        data.map((item, index) => (
+          <div className="flex flex-col gap-4" key={item.id}>
+            <div className={`bg-${bgs[index % bgs.length]} rounded-lg p-4 `}>
+              <div className="center-btw">
+                <h1 className="font-semibold">{item.title}</h1>
+                <span className="rounded-md bg-white text-xs py-1 px-2 ">
+                  {formatDate(item.date)}
+                </span>
+              </div>
+              <p className="text-sm text-gray-400 line-clamp-2 mt-2">
+                {item.description}
+              </p>
+            </div>
           </div>
-          <p className="text-sm text-gray-400 line-clamp-2 mt-2">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dm
-          </p>
-        </div>
-        <div className="bg-schoolPurpleLight rounded-lg p-4">
-          <div className="center-btw">
-            <h1 className="font-semibold">lorem Ipsum lo re</h1>
-            <span className="rounded-md bg-white text-xs py-1 px-2 ">
-              12-05-2025
-            </span>
-          </div>
-          <p className="text-sm text-gray-400 line-clamp-2 mt-2">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dm
-          </p>
-        </div>
-        <div className="bg-schoolYellowLight rounded-lg p-4">
-          <div className="center-btw">
-            <h1 className="font-semibold">lorem Ipsum lo re</h1>
-            <span className="rounded-md bg-white text-xs py-1 px-2 ">
-              12-05-2025
-            </span>
-          </div>
-          <p className="text-sm text-gray-400 line-clamp-2 mt-2">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dm
-          </p>
-        </div>
-      </div>
+        ))}
     </div>
   );
 };
