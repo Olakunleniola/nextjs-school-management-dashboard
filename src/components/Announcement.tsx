@@ -23,11 +23,7 @@ const Announcement = async () => {
     },
   });
 
-  const bgs = [
-    "schoolSkyLight",
-    "schoolPurpleLight",
-    "schoolYellowLight",
-  ];
+  const bgs = ["schoolSkyLight", "schoolPurpleLight", "schoolYellowLight"];
 
   return (
     <div className="w-full bg-white rounded-2xl px-5 py-2">
@@ -38,22 +34,24 @@ const Announcement = async () => {
           view all
         </span>
       </div>
-      {data.length !== 0 &&
-        data.map((item, index) => (
-          <div className="flex flex-col gap-4" key={item.id}>
-            <div className={`bg-${bgs[index % bgs.length]} rounded-lg p-4 `}>
-              <div className="center-btw">
-                <h1 className="font-semibold">{item.title}</h1>
-                <span className="rounded-md bg-white text-xs py-1 px-2 ">
-                  {formatDate(item.date)}
-                </span>
+      <div className="flex flex-col gap-4 my-4">
+        {data.length !== 0 &&
+          data.map((item, index) => (
+            <div className="flex flex-col gap-4" key={item.id}>
+              <div className={`bg-${bgs[index % bgs.length]} rounded-lg p-4 `}>
+                <div className="center-btw">
+                  <h1 className="font-semibold">{item.title}</h1>
+                  <span className="rounded-md bg-white text-xs py-1 px-2 ">
+                    {formatDate(item.date)}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-400 line-clamp-2 mt-2">
+                  {item.description}
+                </p>
               </div>
-              <p className="text-sm text-gray-400 line-clamp-2 mt-2">
-                {item.description}
-              </p>
             </div>
-          </div>
-        ))}
+          ))}
+      </div>
     </div>
   );
 };
