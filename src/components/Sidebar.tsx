@@ -1,4 +1,4 @@
-import { currentUser } from "@clerk/nextjs/server";
+import { getUserRole } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -31,7 +31,7 @@ const menuItems = [
         visible: ["admin", "teacher"],
       },
       {
-        icon: "/subjects.png",
+        icon: "/subject.png",
         label: "Subjects",
         href: "/list/subjects",
         visible: ["admin"],
@@ -61,7 +61,7 @@ const menuItems = [
         visible: ["admin", "teacher", "student", "parent"],
       },
       {
-        icon: "/results.png",
+        icon: "/result.png",
         label: "Results",
         href: "/list/results",
         visible: ["admin", "teacher", "student", "parent"],
@@ -118,8 +118,7 @@ const menuItems = [
 ];
 
 const Sidebar = async () => {
-  const user = await currentUser();
-  const role = user?.publicMetadata?.role as string;
+  const { role } = await getUserRole();
   return (
     <div className="w-[13%] md:w-[8%] lg:w-[18%] xl:[14%] p-4 overflow-auto">
       {/* Logo and brand  */}
@@ -132,16 +131,16 @@ const Sidebar = async () => {
           alt="SchoolSphere Logo"
           width={40}
           height={40}
-          className="h-auto lg:w-10 w-2"
+          className="w-6 sm:w-8 md:w-8 lg:w-10 h-auto"
         />
-        <span className="xl:text-2xl lg:text-md text-sm font-extrabold hidden lg:block leading-2 text-orange-400">
+        <span className="hidden lg:block text-base xl:text-2xl font-extrabold leading-tight text-orange-400">
           School<span className="text-teal-400">Sphere</span>
         </span>
       </Link>
       {/* Menu Items  */}
-      <div className="text-sm mt-5 ">
+      <div className="text-sm mt-5">
         {menuItems.map((item) => (
-          <div key={item.title} className="flex flex-col gap-2  ">
+          <div key={item.title} className="flex flex-col gap-2">
             <span className="uppercase hidden lg:block text-gray-400 font-light my-4">
               {item.title}
             </span>
@@ -164,6 +163,7 @@ const Sidebar = async () => {
                   </Link>
                 );
               }
+              return null;
             })}
           </div>
         ))}

@@ -33,7 +33,6 @@ const AttendanceChartContainer = async () => {
     };
 
   resData.forEach((item) => {
-    const itemDate = new Date(item.date);
     if (dayOfWeek >= 1 && dayOfWeek <= 5) {
       const dayName = daysOfWeeek[dayOfWeek - 1];
       if (item.present) {
@@ -49,7 +48,6 @@ const AttendanceChartContainer = async () => {
     present: attendanceMap[day].present,
     absent: attendanceMap[day].absent,
   }));
-
 
   return (
     <div className="bg-white p-5 h-full rounded-2xl">

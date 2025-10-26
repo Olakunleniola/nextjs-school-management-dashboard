@@ -18,7 +18,7 @@ const TableSearch = () => {
       onSubmit={handleSubmit}
       className="md:w-auto w-full flex items-center gap-2 text-xs ring-[1.5px] px-2 ring-gray-300 rounded-full shadow-sm"
     >
-      {/* <Image src="/search.png" alt="search" width={14} height={14} className="h-auto size-4 object-contain" /> */}
+      <Image src="/search.png" alt="search" width={14} height={14} className="h-auto size-4 object-contain" />
       <input
         type="text"
         placeholder="Search......"

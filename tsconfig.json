@@ -29,7 +29,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/app/(dashboard)/teacher"
+    "src/app/(dashboard)/teacher",
+    "index.d.ts"
   ],
   "exclude": ["node_modules"]
 }

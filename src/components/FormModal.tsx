@@ -2,51 +2,68 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import React, { useActionState, useEffect, useState } from "react";
 import { JSX } from "react/jsx-runtime";
 import dynamic from "next/dynamic";
+import { deleteSubject } from "@/lib/action";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+// import { capitalizeWords } from "@/lib/utils";
 
 const TeacherForm = dynamic(() => import("./forms/TeacherForm"), {
-  loading: () => <h1>Loading...........</h1>
-})
+  loading: () => <h1>Loading...........</h1>,
+});
 const StudentForm = dynamic(() => import("./forms/StudentForm"), {
-  loading: () => <h1>Loading...........</h1>
-})
+  loading: () => <h1>Loading...........</h1>,
+});
 
-interface FormModalProps {
-  table:
-    | "teacher"
-    | "student"
-    | "parent"
-    | "subject"
-    | "class"
-    | "lesson"
-    | "exam"
-    | "assignment"
-    | "result"
-    | "attendance"
-    | "event"
-    | "announcement";
-  type: "create" | "update" | "delete";
-  data?: any;
-  id?: string | number;
-  bgdColor?: string;
-}
+const SubjectForm = dynamic(() => import("./forms/SubjectForm"), {
+  loading: () => <h1>Loading...........</h1>,
+});
+
+const deleteActionMap = {
+  subject: deleteSubject,
+  parent: deleteSubject,
+  teacher: deleteSubject,
+  student: deleteSubject,
+  attendance: deleteSubject,
+  assignment: deleteSubject,
+  exam: deleteSubject,
+  result: deleteSubject,
+  event: deleteSubject,
+  class: deleteSubject,
+  lesson: deleteSubject,
+  announcement: deleteSubject,
+};
 
 const forms: {
-  [key: string]: (data: any, type: "create" | "update") => JSX.Element;
+  [key: string]: (
+    data: any,
+    type: "create" | "update",
+    setOpen: setOpen,
+    relatedData?: any
+  ) => JSX.Element;
 } = {
+  subject: (data, type, setOpen, relatedData) => (
+    <SubjectForm
+      data={data}
+      type={type}
+      setOpen={setOpen}
+      relatedData={relatedData}
+    />
+  ),
   teacher: (data, type) => <TeacherForm data={data} type={type} />,
   student: (data, type) => <StudentForm data={data} type={type} />,
 };
 
-const FormModal: React.FC<FormModalProps> = ({
+const FormModal = ({
   table,
   type,
   data,
   id,
   bgdColor,
-}) => {
+  relatedData,
+}: FormModalProps & { relatedData?: any }) => {
   const size = type === "create" ? "w-8 h-8" : "w-7 h-7";
   const bgColor = bgdColor
     ? bgdColor
@@ -57,12 +74,27 @@ const FormModal: React.FC<FormModalProps> = ({
     : "bg-schoolSky";
 
   const [open, setOpen] = useState(false);
+  const [state, formAction] = useActionState(deleteActionMap[table], {
+    success: false,
+    error: false,
+  });
+  const router = useRouter();
+
+  useEffect(() => {
+    if (state.success) {
+      toast(`✅ ${table.toUpperCase()} ${type}d successfully`);
+      router.refresh();
+      setOpen(false);
+    }
+  }, [state, router, table, type]);
+
   const Form = () =>
     type === "delete" && id ? (
       <form
-        action=""
+        action={formAction}
         className="flex flex-col p-4 items-center justify-center gap-5"
       >
+        <input type="hidden" name="id" defaultValue={id} />
         <span className="text-lg font-semibold text-center">
           Are you sure you want to delete this {table}?
         </span>
@@ -82,7 +114,7 @@ const FormModal: React.FC<FormModalProps> = ({
         </div>
       </form>
     ) : type === "update" || type === "create" ? (
-      forms[table](data, type)
+      forms[table](data, type, setOpen, relatedData)
     ) : (
       "Forms not found "
     );
@@ -109,7 +141,13 @@ const FormModal: React.FC<FormModalProps> = ({
               className="absolute top-4 right-4"
               onClick={() => setOpen(false)}
             >
-              <Image src="/close.png" alt="" width={14} height={14} />
+              <Image
+                src="/close.png"
+                alt=""
+                width={14}
+                height={14}
+                className="cursor-pointer"
+              />
             </button>
             <Form />
           </div>

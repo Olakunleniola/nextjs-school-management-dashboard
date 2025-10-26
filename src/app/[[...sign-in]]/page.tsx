@@ -25,7 +25,7 @@ function LogInPage() {
         >
           <h1 className="flex items-center gap-2 xl:text-2xl lg:text-md text-md font-extrabold justify-center">
             <Image
-              src="/school-logo.png"
+              src="/schoolsphere-logo.png"
               alt="logo"
               width={24}
               height={24}

@@ -1,17 +1,5 @@
 import { FieldError } from "react-hook-form";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-interface InputFieldProp {
-  label: string;
-  register: any;
-  type?: string;
-  defaultValue?: string;
-  name: string;
-  errors?: FieldError;
-  inputProps?: React.InputHTMLAttributes<HTMLInputElement>;
-  registerOptions?: any;
-}
-
 const InputField = ({
   label,
   type = "text",
@@ -21,9 +9,10 @@ const InputField = ({
   errors,
   inputProps,
   registerOptions,
-}: InputFieldProp) => {
+  hidden,
+}: InputFieldProp & { errors?: FieldError }) => {
   return (
-    <div className="flex flex-col gap-2 w-1/4">
+    <div className={hidden ? "hidden" : "flex flex-col gap-2 w-1/4"}>
       <label htmlFor={name} className="text-xs text-gray-400">
         {label}
       </label>
