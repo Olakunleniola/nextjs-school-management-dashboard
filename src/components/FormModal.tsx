@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import Image from "next/image";
 import React, { useActionState, useEffect, useState } from "react";
 import { JSX } from "react/jsx-runtime";
 import dynamic from "next/dynamic";
-import { deleteSubject } from "@/lib/action";
+import { deleteClass, deleteSubject } from "@/lib/action";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 // import { capitalizeWords } from "@/lib/utils";
@@ -20,9 +19,13 @@ const StudentForm = dynamic(() => import("./forms/StudentForm"), {
 const SubjectForm = dynamic(() => import("./forms/SubjectForm"), {
   loading: () => <h1>Loading...........</h1>,
 });
+const ClassForm = dynamic(() => import("./forms/ClassForm"), {
+  loading: () => <h1>Loading...........</h1>,
+});
 
 const deleteActionMap = {
   subject: deleteSubject,
+  class: deleteClass,
   parent: deleteSubject,
   teacher: deleteSubject,
   student: deleteSubject,
@@ -31,7 +34,6 @@ const deleteActionMap = {
   exam: deleteSubject,
   result: deleteSubject,
   event: deleteSubject,
-  class: deleteSubject,
   lesson: deleteSubject,
   announcement: deleteSubject,
 };
@@ -46,6 +48,14 @@ const forms: {
 } = {
   subject: (data, type, setOpen, relatedData) => (
     <SubjectForm
+      data={data}
+      type={type}
+      setOpen={setOpen}
+      relatedData={relatedData}
+    />
+  ),
+  class: (data, type, setOpen, relatedData) => (
+    <ClassForm
       data={data}
       type={type}
       setOpen={setOpen}

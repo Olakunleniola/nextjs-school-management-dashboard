@@ -8,17 +8,24 @@ const FormContainer = async ({
   id,
   bgdColor,
 }: FormModalProps) => {
-
   let relatedData = {};
 
   if (type !== "delete") {
     switch (table) {
-      case "subject":   
+      case "subject":
         const subjectTeachers = await prisma.teacher.findMany({
           select: { id: true, surname: true, name: true },
         });
         relatedData = { teachers: subjectTeachers };
         break;
+      case "class":
+        const classGrades = await prisma.grade.findMany({
+          select: { id: true, level: true },
+        });
+        const classTeachers = await prisma.teacher.findMany({
+          select: { id: true, name: true, surname: true },
+        });
+        relatedData = { grades: classGrades, teachers: classTeachers };
       default:
         break;
     }

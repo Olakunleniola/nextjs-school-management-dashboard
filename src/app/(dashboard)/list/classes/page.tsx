@@ -2,11 +2,11 @@ import Pagination from "@/components/Pagination";
 import Search from "@/components/TableSearch";
 import Table from "@/components/Table";
 import Image from "next/image";
-import FormModal from "@/components/FormModal";
 import { Class, Prisma, Teacher } from "@/generated/prisma";
 import prisma from "@/lib/prisma";
 import { ITEMS_PER_PAGE } from "@/lib/settings";
 import { getUserRole } from "@/lib/utils";
+import FormContainer from "@/components/FormContainer";
 
 type ClassesProp = Class & { supervisor: Teacher };
 
@@ -61,8 +61,8 @@ const ClassesListPage = async ({
     }
   }
   // Role Conditions
-  if(role === "teacher") {
-    query.supervisorId = userId!
+  if (role === "teacher") {
+    query.supervisorId = userId!;
   }
 
   const [data, count] = await prisma.$transaction([
@@ -88,9 +88,9 @@ const ClassesListPage = async ({
         <div className="flex items-center gap-2">
           {role === "admin" && (
             <>
-              <FormModal type="update" table="class" data={items} />
-              <FormModal type="delete" table="class" id={items.id} />
-            </>
+              <FormContainer type="update" table="class" data={items} />
+              <FormContainer type="delete" table="class" id={items.id} />
+            </>  
           )}
         </div>
       </td>
@@ -114,9 +114,9 @@ const ClassesListPage = async ({
               />
             </button>
             <button className="w-8 h-8 center rounded-full bg-schoolYellow p-2 cursor-pointer">
-              <Image src="/sort.png" alt="sort-logo" width={20} height={20} />
+              <Image src="/sorts.png" alt="sort-logo" width={20} height={20} />
             </button>
-            {role === "admin" && <FormModal type="create" table="class" />}
+            {role === "admin" && <FormContainer type="create" table="class" />}
           </div>
         </div>
       </div>
