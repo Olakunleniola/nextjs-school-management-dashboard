@@ -1,53 +1,54 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { useForm, Resolver } from "react-hook-form";
 import InputField from "../InputField";
 import Image from "next/image";
+import { teacherSchema, teacherSchemaType } from "@/lib/formValidationSchema";
+import { useActionState, useEffect, useState, useTransition } from "react";
+import { createTeacher, updateTeacher } from "@/lib/action";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import { CldUploadWidget } from "next-cloudinary";
 
 interface TecherFormProp {
   type: "create" | "update";
   id?: number;
   data: any;
+  setOpen: setOpen;
+  relatedData?: any;
 }
 
-const schema = z.object({
-  username: z
-    .string()
-    .min(3, { message: "Username  must be at least 3 characters" })
-    .max(20, { message: "Username must be at most 20 characters" }),
-  password: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters" }),
-  email: z.email({ message: "Email is required" }),
-  firstName: z
-    .string()
-    .min(3, { message: "Firstname must be at least 3 characters" }),
-  lastName: z
-    .string()
-    .min(3, { message: "Lastname must be at least 3 characters" }),
-  phone: z.number().min(11, { message: "must be 11 characters" }),
-  address: z
-    .string()
-    .min(3, { message: "Address must be at least 3 characters" }),
-  birthday: z.date({ message: "Birthday is required" }),
-  bloodType: z.string().min(2, { message: "Blood Type is required" }),
-  sex: z.enum(["male", "female"], { message: "Sex is required" }),
-  img: z.file({ message: "Image is required" }),
-});
+const TeacherForm = ({ type, data, relatedData, setOpen }: TecherFormProp) => {
+  const resolver = zodResolver(teacherSchema) as Resolver<teacherSchemaType>;
 
-type Inputs = z.infer<typeof schema>;
-
-const TeacherForm = ({ type, id, data }: TecherFormProp) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<Inputs>({ resolver: zodResolver(schema) });
+  } = useForm<teacherSchemaType>({ resolver });
+
+  const [state, formState] = useActionState(
+    type === "create" ? createTeacher : updateTeacher,
+    { success: false, error: false }
+  );
+
+  const [pending, startTransition] = useTransition();
+  const [img, setImage] = useState<any>();
+  const router = useRouter();
+  const { classes, subjects } = relatedData;
+
+  useEffect(() => {
+    if (state.success) {
+      toast(`✅ Teacher successfuly ${type}ed`);
+      router.refresh();
+      setOpen(false);
+    }
+  }, [state, router]);
 
   const onSubmit = handleSubmit((data) => {
-    console.log(data, id);
+    startTransition(() => {
+      formState({ ...data, img: img?.secure_url });
+    });
   });
 
   return (
@@ -57,6 +58,15 @@ const TeacherForm = ({ type, id, data }: TecherFormProp) => {
         Authentication information
       </span>
       <div className="flex flex-wrap gap-4 justify-between">
+        <InputField
+          register={register}
+          label="ID"
+          name="id"
+          defaultValue={data?.id}
+          inputProps={{ placeholder: data?.id }}
+          errors={errors?.id}
+          hidden
+        />
         <InputField
           register={register}
           label="Username"
@@ -87,26 +97,25 @@ const TeacherForm = ({ type, id, data }: TecherFormProp) => {
       <div className="flex flex-wrap gap-4 justify-between">
         <InputField
           register={register}
-          label="First Name"
-          name="firstName"
-          defaultValue={data?.firstName}
-          errors={errors?.firstName}
+          label="Name"
+          name="name"
+          defaultValue={data?.name}
+          errors={errors?.name}
         />
         <InputField
           register={register}
-          label="Last Name"
-          name="lastName"
-          defaultValue={data?.lastName}
-          errors={errors?.lastName}
+          label="Surname"
+          name="surname"
+          defaultValue={data?.surname}
+          errors={errors?.surname}
         />
         <InputField
-          type="number"
           register={register}
           label="Phone"
           name="phone"
           defaultValue={data?.phone || 0}
           errors={errors?.phone}
-          registerOptions={{ valueAsNumber: true }}
+          // registerOptions={{ valueAsNumber: true }}
         />
         <InputField
           register={register}
@@ -127,27 +136,74 @@ const TeacherForm = ({ type, id, data }: TecherFormProp) => {
           register={register}
           label="BirthDay"
           name="birthday"
-          defaultValue={data?.birthday}
+          defaultValue={data?.birthday.toISOString().split("T")[0]}
           errors={errors?.birthday}
         />
+
         <div className="flex flex-col gap-2 w-1/4">
           <label htmlFor="sex" className="text-xs text-gray-400">
             Sex
           </label>
           <select
-            name="sex"
             id="sex"
             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
             defaultValue={data?.sex}
+            {...register("sex")}
           >
             <option value=""></option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
+            <option value="FEMALE">Male</option>
+            <option value="MALE">Female</option>
           </select>
           {errors?.sex?.message && (
             <p className="text-xs text-red-500">{errors?.sex?.message}</p>
           )}
         </div>
+
+        <div className="flex flex-col gap-2 w-1/4">
+          <label htmlFor="subjects" className="text-xs text-gray-400">
+            Subjects
+          </label>
+          <select
+            multiple
+            id="subjects"
+            className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
+            defaultValue={data?.subjects}
+            {...register("subjects")}
+          >
+            {subjects.map((subject: { id: number; name: string }) => (
+              <option value={subject.id} key={subject.id}>
+                {subject.name}
+              </option>
+            ))}
+          </select>
+          {errors?.subjects?.message && (
+            <p className="text-xs text-red-500">{errors?.subjects?.message}</p>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-2 w-1/4">
+          <label htmlFor="classes" className="text-xs text-gray-400">
+            Classes
+          </label>
+          <select
+            multiple
+            id="classes"
+            className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
+            defaultValue={data?.classes}
+            {...register("classes")}
+          >
+            {classes.map((classItem: { id: number; name: string }) => (
+              <option value={classItem.id} key={classItem.id}>
+                {classItem.name}
+              </option>
+            ))}
+          </select>
+          {errors?.classes?.message && (
+            <p className="text-xs text-red-500">{errors?.classes?.message}</p>
+          )}
+        </div>
+
+        {/* 
         <div className="flex flex-col items-center justify-center gap-2 w-1/4">
           <label
             htmlFor="image"
@@ -168,9 +224,47 @@ const TeacherForm = ({ type, id, data }: TecherFormProp) => {
           {errors?.img?.message && (
             <p className="text-xs text-red-500">{errors?.img?.message}</p>
           )}
+        </div> */}
+        <div className="flex items-center justify-center gap-7 w-1/4">
+          <CldUploadWidget
+            uploadPreset="school"
+            onSuccess={(result, { widget }) => {
+              console.log(result.info);
+              setImage(result.info);
+              widget.close();
+            }}
+          >
+            {({ open }) => {
+              return (
+                <div
+                  className="flex items-center gap-2 text-xs cursor-pointer"
+                  onClick={() => open()}
+                >
+                  <Image src="/upload.png" alt="" width={24} height={24} />
+                  <span className="">Upload your image</span>
+                </div>
+              );
+            }}
+          </CldUploadWidget>
+          <div className="flex flex-col items-center justify-center gap-2 w-1/3 aspect-square rounded-full overflow-hidden">
+            {img && (
+              <Image
+                src={img.secure_url}
+                alt="upload img"
+                width={20}
+                height={20}
+                className="w-full h-full rounded-full object-cover"
+                unoptimized
+              />
+            )}
+          </div>
         </div>
       </div>
+      {state.error && (
+        <span className="text-red-500 text-sm">⛔ somethig wend wrong</span>
+      )}
       <button
+        disabled={pending}
         type="submit"
         className="bg-blue-500 text-sm font-bold p-2 rounded-lg text-white capitalize"
       >

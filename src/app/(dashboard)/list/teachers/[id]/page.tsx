@@ -1,13 +1,43 @@
 import Announcement from "@/components/Announcement";
-import BigCalendar from "@/components/BigCalendar";
-import FormModal from "@/components/FormModal";
 import Performance from "@/components/Performance";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { singleTeacherSampleData } from "../../../../../../lib/Data";
+import prisma from "@/lib/prisma";
+import { Teacher } from "@/generated/prisma";
+import { notFound } from "next/navigation";
+import FormContainer from "@/components/FormContainer";
+import { formatDate, getUserRole } from "@/lib/utils";
+import BigCalendarContainer from "@/components/BigCalendarContainer";
 
-const SingleTeacherPage = () => {
+const SingleTeacherPage = async ({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) => {
+  const { id } = await params;
+  const { role } = await getUserRole();
+  const teacher:
+    | (Teacher & {
+        _count: { lessons: number; subjects: number; classes: number };
+      })
+    | null = await prisma.teacher.findUnique({
+    where: { id: id },
+    include: {
+      _count: {
+        select: {
+          lessons: true,
+          classes: true,
+          subjects: true,
+        },
+      },
+    },
+  });
+
+  if (!teacher) {
+    return notFound();
+  }
+
   return (
     <div className="flex xl:flex-row flex-col gap-4 flex-1 mx-4">
       {/* LEFT */}
@@ -19,7 +49,7 @@ const SingleTeacherPage = () => {
             <div className="md:w-1/3 w-full overflow-hidden">
               <div className="center rounded-full overflow-auto">
                 <Image
-                  src="/sampleUser.png"
+                  src={teacher.img || "/sampleUser.png"}
                   alt="teacher_photo"
                   width={200}
                   height={200}
@@ -30,14 +60,16 @@ const SingleTeacherPage = () => {
             <div className="md:flex-1 w-full flex flex-col gap-2 justify-between">
               <div className="flex gap-4 items-center justify-between">
                 <h1 className="text-xl font-semibold capitalize">
-                  Leonard Snejder
+                  {teacher.name + " " + teacher.surname}
                 </h1>
-                <FormModal
-                  type="update"
-                  table="teacher"
-                  data={singleTeacherSampleData}
-                  bgdColor="bg-black"
-                />
+                {role === "admin" && (
+                  <FormContainer
+                    type="update"
+                    table="teacher"
+                    data={teacher}
+                    bgdColor="bg-blue-600"
+                  />
+                )}
               </div>
               <p className="text-sm text-gray-500">
                 Loren ipsunn asedlkfd csksmm vsdlksmsd
@@ -45,7 +77,7 @@ const SingleTeacherPage = () => {
               <div className="center-btw flex-wrap text-xs font-medium gap-2">
                 <div className="flex items-center gap-2 md:w-1/3 lg:w-full w-full 2xl:w-1/3">
                   <Image src="/blood.png" alt="logo" width={14} height={14} />
-                  <span>A+</span>
+                  <span>{teacher.bloodType}</span>
                 </div>
                 <div className="flex items-center gap-2 md:w-1/3 lg:w-full w-full 2xl:w-1/3">
                   <Image
@@ -54,16 +86,16 @@ const SingleTeacherPage = () => {
                     width={14}
                     height={14}
                   />
-                  <span>January 2025</span>
+                  <span>{formatDate(teacher.birthday)}</span>
                 </div>
-                <div className="flex items-center gap-2 md:w-1/3 lg:w-full w-full 2xl:w-1/3">
+                <div className="flex items-center gap-2 md:w-1/3 lg:w-full w-full 2xl:w-1/3 truncate">
                   <Image src="/mail.png" alt="logo" width={14} height={14} />
-                  <span>user@user.com</span>
+                  <span className="">{teacher.email || "-"}</span>
                 </div>
-                <div className="flex items-center gap-2 md:w-1/3 lg:w-full w-full 2xl:w-1/3">
+                <div className="flex items-center gap-2 md:w-1/3 lg:w-full w-full 2xl:w-1/3 truncate">
                   <Image src="/phone.png" alt="logo" width={14} height={14} />
-                  <span className="text-blue-700 underline cursor-pointer hover:text-red-400 text-xs">
-                    +234-816-29348
+                  <span className="text-blue-700 underline cursor-pointer hover:text-red-400 text-xs ">
+                    {teacher.phone || "-"}
                   </span>
                 </div>
               </div>
@@ -93,8 +125,10 @@ const SingleTeacherPage = () => {
                 className="w-6 h-6"
               />
               <div className="">
-                <h1 className="text-xl font-semibold">2</h1>
-                <span className="text-sm text-gray-400">Branches</span>
+                <h1 className="text-xl font-semibold">
+                  {teacher._count.subjects || "-"}
+                </h1>
+                <span className="text-sm text-gray-400">Subjecs</span>
               </div>
             </div>
             <div className="bg-white flex items-center gap-4 rounded-lg p-4  w-full md:w-[48%] lg:w-[45%] 2xl:w-[48%]">
@@ -106,7 +140,9 @@ const SingleTeacherPage = () => {
                 className="w-6 h-6"
               />
               <div className="">
-                <h1 className="text-xl font-semibold">6</h1>
+                <h1 className="text-xl font-semibold">
+                  {teacher._count.lessons || "-"}
+                </h1>
                 <span className="text-sm text-gray-400">Lessons</span>
               </div>
             </div>
@@ -119,7 +155,9 @@ const SingleTeacherPage = () => {
                 className="w-6 h-6"
               />
               <div className="">
-                <h1 className="text-xl font-semibold">6</h1>
+                <h1 className="text-xl font-semibold">
+                  {teacher._count.classes || "-"}
+                </h1>
                 <span className="text-sm text-gray-400">Classes</span>
               </div>
             </div>
@@ -128,7 +166,7 @@ const SingleTeacherPage = () => {
         {/* BOTTOM */}
         <div className="mt-4 p-4 h-[800px] bg-white rounded-lg">
           <h1 className="font-semibold text-xl">Teacher&apos;s Schedule</h1>
-          <BigCalendar />
+          <BigCalendarContainer type="teacherId" id={teacher.id} />
         </div>
       </div>
       {/* RIGHT */}
@@ -138,23 +176,32 @@ const SingleTeacherPage = () => {
           <div className="mt-4 flex flex-wrap gap-3 text-xs text-gray-500">
             <Link
               className="p-3 rounded-md bg-schoolSky"
-              href={`/list/classes?supervisorid=${"teacher11"}`}
+              href={`/list/classes?supervisorid=${teacher.id}`}
             >
               Teacher&apos;s Classes
             </Link>
             <Link
               className="p-3 rounded-md bg-schoolPurpleLight "
-              href={`/list/students?teacherid=${"teacher4"}`}
+              href={`/list/students?teacherid=${teacher.id}`}
             >
               Teacher&apos;s Students
             </Link>
-            <Link className="p-3 rounded-md bg-schoolYellowLight" href={`/list/lessons?teacherid=${"teacher4"}`}>
+            <Link
+              className="p-3 rounded-md bg-schoolYellowLight"
+              href={`/list/lessons?teacherid=${teacher.id}`}
+            >
               Teacher&apos;s Lessons
             </Link>
-            <Link className="p-3 rounded-md bg-pink-50" href={`/list/exams?teacherid=${"teacher4"}`}>
+            <Link
+              className="p-3 rounded-md bg-pink-50"
+              href={`/list/exams?teacherid=${teacher.id}`}
+            >
               Teacher&apos;s Exams
             </Link>
-            <Link className="p-3 rounded-md bg-schoolSkyLight" href={`/list/assignments?teacherid=${"teacher4"}`}>
+            <Link
+              className="p-3 rounded-md bg-schoolSkyLight"
+              href={`/list/assignments?teacherid=${teacher.id}`}
+            >
               Teacher&apos;s Assignments
             </Link>
           </div>

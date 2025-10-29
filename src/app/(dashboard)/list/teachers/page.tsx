@@ -3,11 +3,11 @@ import Search from "@/components/TableSearch";
 import Table from "@/components/Table";
 import Image from "next/image";
 import Link from "next/link";
-import FormModal from "@/components/FormModal";
 import prisma from "@/lib/prisma";
 import { Teacher, Class, Subject, Prisma } from "@/generated/prisma";
 import { ITEMS_PER_PAGE } from "@/lib/settings";
 import { getUserRole } from "@/lib/utils";
+import FormContainer from "@/components/FormContainer";
 
 type TeacherList = Teacher & { subjects: Subject[] } & { classes: Class[] };
 
@@ -135,7 +135,7 @@ const TeachersListPage = async ({
             </button>
           </Link>
           {role === "admin" && (
-            <FormModal type="delete" table="teacher" id={items.id} />
+            <FormContainer type="delete" table="teacher" id={items.id} />
           )}
         </div>
       </td>
@@ -161,9 +161,9 @@ const TeachersListPage = async ({
               />
             </button>
             <button className="w-8 h-8 center rounded-full bg-schoolYellow p-2 cursor-pointer">
-              <Image src="/sort.png" alt="sort-logo" width={20} height={20} />
+              <Image src="/sorts.png" alt="sort-logo" width={20} height={20} />
             </button>
-            {role == "admin" && <FormModal type="create" table="teacher" />}
+            {role == "admin" && <FormContainer type="create" table="teacher" />}
           </div>
         </div>
       </div>

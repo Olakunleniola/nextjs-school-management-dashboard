@@ -8,11 +8,13 @@ const AttendanceChartContainer = async () => {
   const daySinceMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
   const lastMonday = new Date(today);
   lastMonday.setDate(today.getDate() - daySinceMonday);
+  lastMonday.setHours(0, 0, 0, 0); // Set to start of the day
 
   const resData = await prisma.attendance.findMany({
     where: {
       date: {
         gte: lastMonday,
+        
       },
     },
     select: {
@@ -31,6 +33,7 @@ const AttendanceChartContainer = async () => {
       Thu: { present: 0, absent: 0 },
       Fri: { present: 0, absent: 0 },
     };
+
 
   resData.forEach((item) => {
     if (dayOfWeek >= 1 && dayOfWeek <= 5) {

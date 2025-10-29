@@ -1,11 +1,10 @@
 import { UserButton } from "@clerk/nextjs";
 import Image from "next/image";
 import React from "react";
-import { currentUser } from "@clerk/nextjs/server";
-import { capitalizeWords } from "@/lib/utils";
+import { getUserRole } from "@/lib/utils";
 
 const Navbar = async () => {
-  const user = await currentUser();
+  const { role } = await getUserRole();
   return (
     <div className="flex items-center justify-between p-4 ">
       {/* SEARCH BAR */}
@@ -47,8 +46,8 @@ const Navbar = async () => {
         </div>
         <div className="flex flex-col">
           <span className="leading-3 text-sm font-medium">John Doe</span>
-          <span className="leading-3 text-[10px]  text-gray-500 text-right">
-            {capitalizeWords(user?.publicMetadata?.role as string)}
+          <span className="leading-3 text-[10px]  text-gray-500 text-right capitalize">
+            {role}
           </span>
         </div>
         {/* <Image

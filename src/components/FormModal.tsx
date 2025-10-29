@@ -4,7 +4,7 @@ import Image from "next/image";
 import React, { useActionState, useEffect, useState } from "react";
 import { JSX } from "react/jsx-runtime";
 import dynamic from "next/dynamic";
-import { deleteClass, deleteSubject } from "@/lib/action";
+import { deleteClass, deleteSubject, deleteTeacher } from "@/lib/action";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 // import { capitalizeWords } from "@/lib/utils";
@@ -15,7 +15,6 @@ const TeacherForm = dynamic(() => import("./forms/TeacherForm"), {
 const StudentForm = dynamic(() => import("./forms/StudentForm"), {
   loading: () => <h1>Loading...........</h1>,
 });
-
 const SubjectForm = dynamic(() => import("./forms/SubjectForm"), {
   loading: () => <h1>Loading...........</h1>,
 });
@@ -26,8 +25,8 @@ const ClassForm = dynamic(() => import("./forms/ClassForm"), {
 const deleteActionMap = {
   subject: deleteSubject,
   class: deleteClass,
+  teacher: deleteTeacher,
   parent: deleteSubject,
-  teacher: deleteSubject,
   student: deleteSubject,
   attendance: deleteSubject,
   assignment: deleteSubject,
@@ -62,7 +61,14 @@ const forms: {
       relatedData={relatedData}
     />
   ),
-  teacher: (data, type) => <TeacherForm data={data} type={type} />,
+  teacher: (data, type, setOpen, relatedData) => (
+    <TeacherForm
+      data={data}
+      type={type}
+      setOpen={setOpen}
+      relatedData={relatedData}
+    />
+  ),
   student: (data, type) => <StudentForm data={data} type={type} />,
 };
 

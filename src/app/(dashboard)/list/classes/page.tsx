@@ -83,7 +83,7 @@ const ClassesListPage = async ({
       <td className="flex items-center p-4 gap-4">{items.name}</td>
       <td className="hidden md:table-cell">{items.capacity}</td>
       <td className="hidden md:table-cell">{items.name[0]}</td>
-      <td className="hidden md:table-cell">{items.supervisor.name}</td>
+      <td className="hidden md:table-cell">{items.supervisor?.name}</td>
       <td>
         <div className="flex items-center gap-2">
           {role === "admin" && (

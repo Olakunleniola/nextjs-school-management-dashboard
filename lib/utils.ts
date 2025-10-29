@@ -1,5 +1,5 @@
 import { ITEMS_PER_PAGE } from "./settings";
-import { auth } from "@clerk/nextjs/server";
+import { auth, createClerkClient } from "@clerk/nextjs/server";
 
 export const tableItem = (val: number) => ITEMS_PER_PAGE * (val - 1);
 
@@ -20,8 +20,12 @@ export function capitalizeWords(str: string): string {
 export async function getUserRole() {
   const { sessionClaims, userId } = await auth();
   const role = (sessionClaims?.metadata as { role: string })?.role;
-  return { role, userId };
+  return { role, userId };  
 }
+
+export const clerkClient = createClerkClient({
+  secretKey: process.env.CLERK_SECRET_KEY,
+});
 
 const currentWorkWeek = () => {
   const today = new Date();
